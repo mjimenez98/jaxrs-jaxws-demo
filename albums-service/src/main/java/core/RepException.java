@@ -1,4 +1,4 @@
-package exceptions;
+package core;
 
 public class RepException {
 }

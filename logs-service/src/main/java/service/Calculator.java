@@ -1,10 +1,11 @@
 package service;
-import models.ResultData;
+import core.ResultData;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
+// TO BE DELETED. THIS IS AN EXAMPLE
 /**
  * Interface for our Calculator web service
  */

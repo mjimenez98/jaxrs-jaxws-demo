@@ -1,8 +1,9 @@
 package service;
-import models.ResultData;
+import core.ResultData;
 
 import javax.jws.WebService;
 
+// TO BE DELETED. THIS IS AN EXAMPLE
 /**
  * This class holds the implementation of the methods of our SOAP web service
  */

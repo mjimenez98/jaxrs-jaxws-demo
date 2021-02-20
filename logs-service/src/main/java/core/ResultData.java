@@ -1,5 +1,6 @@
-package models;
+package core;
 
+// TO BE DELETED. THIS IS AN EXAMPLE
 public class ResultData {
     double num1;
     double num2;

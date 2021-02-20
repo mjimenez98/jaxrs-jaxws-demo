@@ -1,6 +1,6 @@
-package models;
+package core;
 
-public class Artist implements ArtistInt {
+public class Artist {
     private String firstName;
     private String lastName;
 

@@ -1,12 +1,13 @@
-package models;
+package core;
 
-public class Album implements AlbumInt {
+public class Album {
     private String description;
     private String isrc;
     private String title;
     private int releaseYear;
 
     private Artist artist;
+    private Cover cover;
 
     public Album() {
         this.description = null;
@@ -14,14 +15,16 @@ public class Album implements AlbumInt {
         this.title = null;
         this.releaseYear = -1;
         this.artist = new Artist();
+        this.cover = new Cover();
     }
 
-    public Album(String artistName, String description, String isrc, String title, int releaseYear, Artist artist) {
+    public Album(String description, String isrc, String title, int releaseYear, Artist artist, Cover cover) {
         this.description = description;
         this.isrc = isrc;
         this.title = title;
         this.releaseYear = releaseYear;
         this.artist = new Artist(artist);
+        this.cover = new Cover(cover);
     }
 
     public Album(Album album) {
@@ -30,6 +33,7 @@ public class Album implements AlbumInt {
         this.title = album.title;
         this.releaseYear = album.releaseYear;
         this.artist = new Artist(album.artist);
+        this.cover = new Cover(album.cover);
     }
 
     public String getDescription() {
@@ -52,6 +56,10 @@ public class Album implements AlbumInt {
         return artist;
     }
 
+    public Cover getCover() {
+        return cover;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -70,5 +78,9 @@ public class Album implements AlbumInt {
 
     public void setArtist(Artist artist) {
         this.artist = new Artist(artist);
+    }
+
+    public void setCover(Cover cover) {
+        this.cover = new Cover(cover);
     }
 }
