@@ -1,2 +1,2 @@
-# rest-soap-demo
-Java RESTful (JAX-RS) and SOAP (JAX-WS) web services 
+# jaxrs-jaxws-demo
+Demo of Java RESTful (JAX-RS) and SOAP-based (JAX-WS) web services.
