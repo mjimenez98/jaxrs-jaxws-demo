@@ -6,19 +6,24 @@
 //Cover image: optional^^
 
 public class AlbumGateway{
-    public Record find(int isrc){
+    Connection conn = DBConnect.connect();
+    public Album find(int isrc){
         // find album by ISRC
     }
-    public Record findByAlbumTitle(){
-        // find album by title
+    public List <Album> findAll(){
+        // find all albums by title
     }
     public void update(int isrc, String title, String description, int releaseYear, Artist artist, Cover cover){
-        // Update album.
+        // Update album
     }
     public void insert(int isrc, String title, String description, int releaseYear, Artist artist, Cover cover){
         // insert album.
     }
-    public void delete(int isrc){
+    public void delete(int isrc) {
         // Delete album by ISRC.
+    }
+    //For testing
+    public static void main(String[] args){
+
     }
 }
