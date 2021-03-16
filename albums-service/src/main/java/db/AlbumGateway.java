@@ -179,27 +179,6 @@ public class AlbumGateway {
         }
         return null;
     }
-
-    //Needs further work
-    public void deleteAlbumCover(String isrc) {
-        connect = DBConnect.connect();
-        try{
-            Statement deleteStatement = connect.createStatement();
-            String deleteStr = "DELETE FROM Albums WHERE isrc=" + isrc;
-            deleteStatement.executeUpdate(deleteStr);
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-        finally{
-            try {
-                DBConnect.disconnect();
-            }
-            catch (SQLException e){
-                throw new RuntimeException("ERROR: Failed to connect.", e);
-            }
-        }
-    }
     public void updateAlbumCover(String isrc, String pathname){
         connect = DBConnect.connect();
         try{
@@ -224,17 +203,33 @@ public class AlbumGateway {
             }
         }
     }
+
+    //Needs further work
+    public void deleteAlbumCover(String isrc) {
+        connect = DBConnect.connect();
+        try{
+            Statement deleteStatement = connect.createStatement();
+            String deleteStr = "DELETE FROM Albums WHERE isrc=" + isrc;
+            deleteStatement.executeUpdate(deleteStr);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        finally{
+            try {
+                DBConnect.disconnect();
+            }
+            catch (SQLException e){
+                throw new RuntimeException("ERROR: Failed to connect.", e);
+            }
+        }
+    }
     public Album getAlbumCover(String isrc) {
         connect = DBConnect.connect();
         try {
-            String findStr = "SELECT * FROM Albums WHERE isrc=" + isrc;
-            Statement findAllStatement = connect.createStatement();
-            ResultSet table = findAllStatement.executeQuery(findStr);
-
-            if (table.next()) {
-                Album album = new Album();
-                return album;
-            }
+            Statement findCoverStatement = connect.createStatement();
+            String findStr = "SELECT coverart FROM Albums WHERE isrc=" + isrc;
+            ResultSet table = findCoverStatement.executeQuery(findStr);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
