@@ -17,7 +17,7 @@
     <h1 class="display-3 text-light text-center">See Album</h1>
 </div>
 
-<div class="container">
+<div class="container mb-3">
     <h3>Album</h3>
     <h4>Title</h4>
     <p th:text="${album.getTitle()}"></p>
@@ -33,6 +33,24 @@
 
     <h3>Cover</h3>
     <!-- Display image -->
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-3">
+            <form th:action="@{/albums/edit/${isrc}}" method="GET">
+                <div class="mb-2">
+                    <button type="submit" class="btn btn-primary">Edit</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-3">
+            <form th:action="@{/albums/delete/${isrc}}" method="GET">
+                <div class="mb-2">
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 </body>
 </html>

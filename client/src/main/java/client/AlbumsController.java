@@ -6,10 +6,7 @@ import coreClient.Cover;
 import coreClient.Search;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +39,7 @@ public class AlbumsController {
         model.addAttribute("album", new Album("1", "2", "3", 4,
                 new Artist("A", "B"),
                 new Cover(null, null)));
+        model.addAttribute("isrc", isrc);
 
         return "show";
     }
@@ -73,6 +71,13 @@ public class AlbumsController {
 
     @PostMapping("/albums/edit/{isrc}")
     public String editAlbumSubmit(@ModelAttribute Album album, Model model) {
+        return "redirect:/albums";
+    }
+
+//    DELETE
+
+    @GetMapping("/albums/delete/{isrc}")
+    public String deleteAlbum(@PathVariable("isrc") String isrc, Model model) {
         return "redirect:/albums";
     }
 }
