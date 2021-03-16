@@ -11,11 +11,12 @@ import javax.jws.soap.SOAPBinding;
 import java.util.ArrayList;
 import java.util.Date;
 
-@WebService (targetNamespace = "http://www.soen487.com/a2")
+@WebService
 @SOAPBinding
 public interface LogEntries {
     @WebMethod (operationName = "getChangeLongs")
-    public ArrayList<LogEntry> getChangeLogs(@WebParam(name="from" )Date from, @WebParam(name="to" )Date to, @WebParam(name="changeType") ChangeType changeType);
+    LogEntry[] getChangeLogs(@WebParam(name="from") Date from, @WebParam(name="to" ) Date to,
+                                      @WebParam(name="changeType") ChangeType changeType);
     @WebMethod
-    public void clearLogs() throws RepException;
+    void clearLogs() throws RepException;
 }

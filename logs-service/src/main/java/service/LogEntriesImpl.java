@@ -12,7 +12,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-@WebService(name = "LogEntry", endpointInterface = "service.LogEntries")
+@WebService(endpointInterface = "service.LogEntries")
 public class LogEntriesImpl implements LogEntries {
 
     private static AlbumManagerImpl manager;
@@ -23,16 +23,18 @@ public class LogEntriesImpl implements LogEntries {
             throw new Exception();
         isManagerCreated = true;
         AlbumManagerSingleton managerSingleton = AlbumManagerSingleton.INSTANCE;
-        managerSingleton.setAlbumManagerImplementation("business.AlbumManagerImpl");
+        managerSingleton.setAlbumManagerImplementation("repo.AlbumManagerImpl");
         manager = managerSingleton.getAlbumManagerImplementation();
     }
 
     //Sort log entries chronologically by timestamp
     @Override
-    public ArrayList<LogEntry> getChangeLogs(Date from, Date to, ChangeType changeType) {
-        try{
+    public LogEntry[] getChangeLogs(Date from, Date to, ChangeType changeType) {
+        try {
             ArrayList<LogEntry> logs = manager.getChangeLogs(from, to, changeType);
-            return logs.stream().sorted(Comparator.comparing(LogEntry::getTimestamp)).collect(Collectors.toCollection(ArrayList::new));
+            logs = logs.stream().sorted(Comparator.comparing(LogEntry::getTimestamp)).collect(Collectors.toCollection(ArrayList::new));
+
+            return logs.toArray(new LogEntry[0]);
         }
         catch(Exception e){
             throw new RepException(e.getMessage());
