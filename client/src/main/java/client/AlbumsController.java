@@ -31,7 +31,6 @@ public class AlbumsController {
     public String getAlbum(@PathVariable("isrc") String isrc, Model model) {
         Album album = RestCall.GetAlbum(isrc);
         model.addAttribute("album", album);
-        model.addAttribute("isrc", isrc);
 
         return "show";
     }
@@ -41,6 +40,7 @@ public class AlbumsController {
     @GetMapping("/albums/new")
     public String newAlbum(Model model) {
         model.addAttribute("album", new Album());
+
         return "new";
     }
 
@@ -56,16 +56,17 @@ public class AlbumsController {
 
     @GetMapping("/albums/edit/{isrc}")
     public String editAlbum(@PathVariable("isrc") String isrc, Model model) {
-        model.addAttribute("album", new Album("1", "2", "3", 4,
-                        new Artist("A", "B"),
-                        new Cover(null, null)));
-        model.addAttribute("isrc", isrc);
+        Album album = RestCall.GetAlbum(isrc);
+        model.addAttribute("album", album);
 
         return "edit";
     }
 
     @PostMapping("/albums/edit/{isrc}")
     public String editAlbumSubmit(@ModelAttribute Album album, Model model) {
+        album.setCover(new Cover(null, null));
+        RestCall.EditAlbum(album);
+
         return "redirect:/albums";
     }
 
@@ -73,6 +74,8 @@ public class AlbumsController {
 
     @GetMapping("/albums/delete/{isrc}")
     public String deleteAlbum(@PathVariable("isrc") String isrc, Model model) {
+        RestCall.DeleteAlbum(isrc);
+
         return "redirect:/albums";
     }
 }

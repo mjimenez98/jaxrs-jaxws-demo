@@ -40,4 +40,22 @@ public class RestCall {
                 .bodyToMono(Void.class)
                 .block();
     }
+
+    public static void EditAlbum(Album album) {
+        webClient.put()
+                .uri("/albums")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Mono.just(album), Album.class)
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block();
+    }
+
+    public static void DeleteAlbum(String isrc) {
+         webClient.delete()
+                .uri("/albums/" + isrc)
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block();
+    }
 }
