@@ -2,30 +2,31 @@ package core;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.sql.Blob;
 
 public class Cover {
 
-    private File file;
+    private Blob blob;
     private String mimeType;
 
     public Cover() {
         // Could be changed to a default image
-        this.file = null;
+        this.blob = null;
         this.mimeType = null;
     }
 
-    public Cover(File file) {
+    public Cover(Blob blob) {
         // basic file constructor
-        this.file = file;
+        this.blob = blob;
     }
 
-    public Cover(File file, String mimeType) {
-        this.file = file;;
+    public Cover(Blob blob, String mimeType) {
+        this.blob = blob;;
         this.mimeType = mimeType;
     }
 
     public Cover(Cover cover) {
-        this.file = cover.file;
+        this.blob = cover.blob;
         this.mimeType = cover.mimeType;
     }
 
@@ -38,11 +39,11 @@ public class Cover {
         this.mimeType = mimeType;
     }
 
-    public File getFile() {
-        return file;
+    public Blob getBlob() {
+        return blob;
+    }
+    public void setBlob(Blob blob) {
+        this.blob = blob;
     }
 
-    public void setFile(File file) {
-        this.file = file;
-    }
 }

@@ -2,6 +2,7 @@ package db;
 import core.*;
 
 import javax.activation.MimeType;
+import javax.print.attribute.standard.Media;
 import javax.ws.rs.core.MediaType;
 import java.awt.*;
 import java.io.File;
@@ -18,6 +19,17 @@ import java.util.ArrayList;
 public class AlbumGateway {
     static Connection connect = null;
 
+    static public String extractMimeType(String pathname) {
+
+        switch (pathname.substring(pathname.lastIndexOf(".") + 1)) {
+            case "png":
+                return "image/png";
+            case "jpeg":
+                return "image/jpeg";
+            default:
+                return null;
+        }
+    }
     public void createAlbum(String isrc, String title, String description, int releaseYear, Artist artist){
         connect = DBConnect.connect();
         try{
@@ -49,9 +61,9 @@ public class AlbumGateway {
     public void createAlbumWithCover(String isrc, String title, String description, int releaseYear, Artist artist, String pathname){
         connect = DBConnect.connect();
         try{
-
-            String insertStr = "INSERT INTO Albums (isrc, title, description, year, firstname, lastname, coverart) VALUES(?,?,?,?,?,?,?)";
+            String insertStr = "INSERT INTO Albums (isrc, title, description, year, firstname, lastname, coverart, mimetype) VALUES(?,?,?,?,?,?,?,?)";
             File artFile = new File(pathname);
+            String mimeType = extractMimeType(pathname);
             FileInputStream fileIn = new FileInputStream(artFile);
             PreparedStatement insertStatement = connect.prepareStatement(insertStr);
             insertStatement.setString(1, isrc);
@@ -61,9 +73,8 @@ public class AlbumGateway {
             insertStatement.setString(5, artist.getFirstName());
             insertStatement.setString(6, artist.getLastName());
             insertStatement.setBinaryStream(7, fileIn);
+            insertStatement.setString(8, mimeType);
             insertStatement.executeUpdate();
-            System.out.println(insertStr);
-
         }
         catch (Exception e){
             e.printStackTrace();
@@ -188,12 +199,14 @@ public class AlbumGateway {
     public void updateAlbumCover(String isrc, String pathname){
         connect = DBConnect.connect();
         try{
-            String updateStr = "UPDATE Albums SET coverart=? WHERE isrc=?;";
+            String updateStr = "UPDATE Albums SET coverart=?, mimetype=? WHERE isrc=?;";
             File artFile = new File(pathname);
+            String mimeType = extractMimeType(pathname);
             FileInputStream fileIn = new FileInputStream(artFile);
             PreparedStatement updateStatement = connect.prepareStatement(updateStr);
             updateStatement.setBinaryStream(1, fileIn);
-            updateStatement.setString(2, isrc);
+            updateStatement.setString(2, mimeType);
+            updateStatement.setString(3, isrc);
             updateStatement.executeUpdate();
         }
         catch (Exception e){
@@ -211,7 +224,7 @@ public class AlbumGateway {
     public void deleteAlbumCover(String isrc) {
         connect = DBConnect.connect();
         try{
-            String deleteStr = "UPDATE Albums SET coverart=? WHERE isrc=?;" + isrc;
+            String deleteStr = "UPDATE Albums SET coverart=? WHERE isrc=?;";
             PreparedStatement deleteStatement = connect.prepareStatement(deleteStr);
             deleteStatement.setBinaryStream(1, null);
             deleteStatement.setString(2, isrc);
@@ -230,23 +243,17 @@ public class AlbumGateway {
             }
         }
     }
-
     public Cover getAlbumCover(String isrc) {
         connect = DBConnect.connect();
         try {
             Statement findCoverStatement = connect.createStatement();
             String findStr = "SELECT coverart FROM Albums WHERE isrc=" + isrc;
             ResultSet table = findCoverStatement.executeQuery(findStr);
-            //Specify path and file name, for blob download
-            File blobFile = new File("/Users/username/Desktop/covertArt.jpeg");
-            FileOutputStream fileOut = new FileOutputStream(blobFile);
-            if (table.next()){
-                InputStream inStream = table.getBinaryStream("coverart");
-                byte[] bytes = new byte[1024];
-                while (inStream.read(bytes)> 0){
-                    fileOut.write(bytes);
-                }
-                Cover cover = new Cover(blobFile);
+
+            if(table.next()){
+                Blob blob = table.getBlob("coverart");
+                String mimeType = table.getString("mimetype");
+                Cover cover = new Cover(blob,mimeType);
                 return cover;
             }
 
@@ -278,7 +285,8 @@ public class AlbumGateway {
         //Delete specific Album using ISRC from Albums Table
         //ag.deleteAlbum("5");
         //GetAlbumCover
-        System.out.println(ag.getAlbumCover("5"));
-        System.out.println(ag.getAlbumCover("5").getMimeType());
+        //System.out.println(ag.getAlbumCover("5"));
+        //System.out.println(ag.getAlbumCover("5").getMimeType());
+
     }
 }
