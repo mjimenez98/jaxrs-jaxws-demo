@@ -195,7 +195,6 @@ public class AlbumGateway {
             updateStatement.setBinaryStream(1, fileIn);
             updateStatement.setString(2, isrc);
             updateStatement.executeUpdate();
-            System.out.println(updateStr);
         }
         catch (Exception e){
             e.printStackTrace();
@@ -209,13 +208,14 @@ public class AlbumGateway {
             }
         }
     }
-
-    //Needs further work
     public void deleteAlbumCover(String isrc) {
         connect = DBConnect.connect();
         try{
-            Statement deleteStatement = connect.createStatement();
-            String deleteStr = "DELETE FROM Albums WHERE isrc=" + isrc;
+            String deleteStr = "UPDATE Albums SET coverart=? WHERE isrc=?;" + isrc;
+            PreparedStatement deleteStatement = connect.prepareStatement(deleteStr);
+            deleteStatement.setBinaryStream(1, null);
+            deleteStatement.setString(2, isrc);
+            deleteStatement.executeUpdate();
             deleteStatement.executeUpdate(deleteStr);
         }
         catch (Exception e){
