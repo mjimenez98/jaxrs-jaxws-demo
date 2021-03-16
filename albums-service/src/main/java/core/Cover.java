@@ -1,8 +1,11 @@
 package core;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 
 public class Cover {
+
+    private File file;
     private BufferedImage image;
     private String mimeType;
 
@@ -10,6 +13,11 @@ public class Cover {
         // Could be changed to a default image
         this.image = null;
         this.mimeType = null;
+    }
+
+    public Cover(File file) {
+        // basic file constructor
+        this.file = file;
     }
 
     public Cover(BufferedImage image, String mimeType) {
@@ -36,5 +44,13 @@ public class Cover {
 
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 }

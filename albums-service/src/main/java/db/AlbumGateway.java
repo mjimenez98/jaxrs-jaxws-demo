@@ -3,6 +3,8 @@ import core.*;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -65,7 +67,16 @@ public class AlbumGateway {
                 int releaseYear = table.getInt("year");
                 String firstname = table.getString("firstname");
                 String lastname = table.getString("lastname");
-                Album album = new Album(isrc,title,description,releaseYear, new Artist(firstname,lastname), new Cover());
+//                InputStream inStream = table.getBinaryStream("coverart");
+//                if (inStream != null) {
+//                    File fileArt = new File("/Users/zito/Desktop/ca.jpeg");
+//                    FileOutputStream fileOut = new FileOutputStream(fileArt);
+//                    byte[] bytes = new byte[1024];
+//                    while (inStream.read(bytes) > 0) {
+//                        fileOut.write(bytes);
+//                    }
+//                }
+                Album album = new Album(isrc,title,description,releaseYear, new Artist(firstname,lastname), new Cover()); //
                 albums.add(album);
             }
             return albums;
@@ -86,11 +97,21 @@ public class AlbumGateway {
     public void insert(String isrc, String title, String description, int releaseYear, Artist artist, String pathname){
         connect = DBConnect.connect();
         try{
-            Statement insertStatement = connect.createStatement();
-            String insertStr = "INSERT INTO Albums (isrc, title, description, year, firstname, lastname) " +
-                    "VALUES ('" + isrc + "', '" + title + "', '" + description + "', " + releaseYear + ", '" + artist.getFirstName() + "', '" + artist.getLastName() + "');";
+
+            String insertStr = "INSERT INTO Albums (isrc, title, description, year, firstname, lastname, coverart) VALUES(?,?,?,?,?,?,?)";
+            File artFile = new File(pathname);
+            FileInputStream fileIn = new FileInputStream(artFile);
+            PreparedStatement insertStatement = connect.prepareStatement(insertStr);
+            insertStatement.setString(1, isrc);
+            insertStatement.setString(2, title);
+            insertStatement.setString(3, description);
+            insertStatement.setInt(4, releaseYear);
+            insertStatement.setString(5, artist.getFirstName());
+            insertStatement.setString(6, artist.getLastName());
+            insertStatement.setBinaryStream(7, fileIn);
+            insertStatement.executeUpdate();
             System.out.println(insertStr);
-            insertStatement.executeUpdate(insertStr);
+
         }
         catch (Exception e){
             e.printStackTrace();
@@ -104,16 +125,23 @@ public class AlbumGateway {
             }
         }
     }
-    public void update(String isrc, String title, String description, int releaseYear, Artist artist){
+    public void update(String isrc, String title, String description, int releaseYear, Artist artist, String pathname){
         connect = DBConnect.connect();
         try{
-            Statement updateStatement = connect.createStatement();
-            String updateStr = "UPDATE Albums SET isrc='" + isrc + "', " + "title='" + title + "', " + "description='" + description + "', "
-                    + "year=" + releaseYear + ", " + "firstname='" + artist.getFirstName() + "', " + "lastname='" + artist.getLastName() + "' "
-                    + "WHERE isrc=" + isrc + ";";
+            String updateStr = "UPDATE Albums SET isrc=?, title=?, description=?, year=?, firstname=?, lastname=?, coverart=? WHERE isrc=?;";
+            File artFile = new File(pathname);
+            FileInputStream fileIn = new FileInputStream(artFile);
+            PreparedStatement updateStatement = connect.prepareStatement(updateStr);
+            updateStatement.setString(1, isrc);
+            updateStatement.setString(2, title);
+            updateStatement.setString(3, description);
+            updateStatement.setInt(4, releaseYear);
+            updateStatement.setString(5, artist.getFirstName());
+            updateStatement.setString(6, artist.getLastName());
+            updateStatement.setBinaryStream(7, fileIn);
+            updateStatement.setString(8, isrc);
+            updateStatement.executeUpdate();
             System.out.println(updateStr);
-                    updateStatement.executeUpdate(updateStr);
-
         }
         catch (Exception e){
             e.printStackTrace();
@@ -146,18 +174,19 @@ public class AlbumGateway {
             }
         }
     }
+
     // For Testing
     public static void main(String[] args) {
         //Declaring AlbumGateway Object
-        //AlbumGateway ag = new AlbumGateway();
+        AlbumGateway ag = new AlbumGateway();
         //Find Album by ISRC
         //System.out.println(ag.find(1).getReleaseYear());
         //Find All Albums
-        //System.out.println(ag.findAll().get(0).getReleaseYear());
+        System.out.println(ag.findAll().get(4).getCover().getFile());
         //Insert Values into Albums Table
         //ag.insert("5","title5","Description 5", 5555, new Artist("firstfive","lastfive"), "/Users/zito/Desktop/sampleCoverArt.jpeg");
         //Update Values of a specific Album in the Albums Table
-        //ag.update("5","title5","Description 5", 5555, new Artist("NEWfirstfive","NEWlastfive"));
+        //ag.update("5","title5","Description 5", 5555, new Artist("NEWfirstfive","NEWlastfive"), "/Users/zito/Desktop/sampleCoverArt.jpeg");
         //Delete specific Album using ISRC from Albums Table
         //ag.delete("5");
     }
