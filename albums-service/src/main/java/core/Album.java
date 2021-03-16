@@ -10,18 +10,18 @@ public class Album {
     private Cover cover;
 
     public Album() {
-        this.description = null;
         this.isrc = null;
         this.title = null;
+        this.description = null;
         this.releaseYear = -1;
         this.artist = new Artist();
         this.cover = new Cover();
     }
 
-    public Album(String description, String isrc, String title, int releaseYear, Artist artist, Cover cover) {
-        this.description = description;
+    public Album(String isrc, String title, String description, int releaseYear, Artist artist, Cover cover) {
         this.isrc = isrc;
         this.title = title;
+        this.description = description;
         this.releaseYear = releaseYear;
         this.artist = new Artist(artist);
         this.cover = new Cover(cover);
