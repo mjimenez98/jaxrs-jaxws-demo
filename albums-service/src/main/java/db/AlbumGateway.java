@@ -1,10 +1,16 @@
 package db;
 import core.*;
 
+import javax.activation.MimeType;
+import javax.ws.rs.core.MediaType;
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -224,12 +230,26 @@ public class AlbumGateway {
             }
         }
     }
-    public Album getAlbumCover(String isrc) {
+
+    public Cover getAlbumCover(String isrc) {
         connect = DBConnect.connect();
         try {
             Statement findCoverStatement = connect.createStatement();
             String findStr = "SELECT coverart FROM Albums WHERE isrc=" + isrc;
             ResultSet table = findCoverStatement.executeQuery(findStr);
+            //Specify path and file name, for blob download
+            File blobFile = new File("/Users/username/Desktop/covertArt.jpeg");
+            FileOutputStream fileOut = new FileOutputStream(blobFile);
+            if (table.next()){
+                InputStream inStream = table.getBinaryStream("coverart");
+                byte[] bytes = new byte[1024];
+                while (inStream.read(bytes)> 0){
+                    fileOut.write(bytes);
+                }
+                Cover cover = new Cover(blobFile);
+                return cover;
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -245,7 +265,7 @@ public class AlbumGateway {
     // For Testing
     public static void main(String[] args) {
         //Declaring AlbumGateway Object
-        //AlbumGateway ag = new AlbumGateway();
+        AlbumGateway ag = new AlbumGateway();
         //Find Album by ISRC
         //System.out.println(ag.getAlbumInfo("1").getReleaseYear());
         //Find All Albums
@@ -257,5 +277,8 @@ public class AlbumGateway {
         //ag.updateAlbum("5","title5","Description 5", 5555, new Artist("NEWfirstfive","NEWlastfive"));
         //Delete specific Album using ISRC from Albums Table
         //ag.deleteAlbum("5");
+        //GetAlbumCover
+        System.out.println(ag.getAlbumCover("5"));
+        System.out.println(ag.getAlbumCover("5").getMimeType());
     }
 }

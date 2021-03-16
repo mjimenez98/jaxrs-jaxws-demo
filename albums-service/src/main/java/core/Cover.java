@@ -6,12 +6,11 @@ import java.io.File;
 public class Cover {
 
     private File file;
-    private BufferedImage image;
     private String mimeType;
 
     public Cover() {
         // Could be changed to a default image
-        this.image = null;
+        this.file = null;
         this.mimeType = null;
     }
 
@@ -20,23 +19,16 @@ public class Cover {
         this.file = file;
     }
 
-    public Cover(BufferedImage image, String mimeType) {
-        this.image = image;
+    public Cover(File file, String mimeType) {
+        this.file = file;;
         this.mimeType = mimeType;
     }
 
     public Cover(Cover cover) {
-        this.image = cover.image;
+        this.file = cover.file;
         this.mimeType = cover.mimeType;
     }
 
-    public BufferedImage getImage() {
-        return image;
-    }
-
-    public void setImage(BufferedImage image) {
-        this.image = image;
-    }
 
     public String getMimeType() {
         return mimeType;
