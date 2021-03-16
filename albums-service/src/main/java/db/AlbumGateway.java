@@ -1,5 +1,8 @@
 package db;
 import core.*;
+
+import java.io.File;
+import java.io.FileInputStream;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -80,13 +83,14 @@ public class AlbumGateway {
         }
         return null;
     }
-    public void insert(String isrc, String title, String description, int releaseYear, Artist artist){
+    public void insert(String isrc, String title, String description, int releaseYear, Artist artist, String pathname){
         connect = DBConnect.connect();
         try{
             Statement insertStatement = connect.createStatement();
             String insertStr = "INSERT INTO Albums (isrc, title, description, year, firstname, lastname) " +
                     "VALUES ('" + isrc + "', '" + title + "', '" + description + "', " + releaseYear + ", '" + artist.getFirstName() + "', '" + artist.getLastName() + "');";
             System.out.println(insertStr);
+            insertStatement.executeUpdate(insertStr);
         }
         catch (Exception e){
             e.printStackTrace();
@@ -151,7 +155,7 @@ public class AlbumGateway {
         //Find All Albums
         //System.out.println(ag.findAll().get(0).getReleaseYear());
         //Insert Values into Albums Table
-        //ag.insert("5","title5","Description 5", 5555, new Artist("firstfive","lastfive"));
+        //ag.insert("5","title5","Description 5", 5555, new Artist("firstfive","lastfive"), "/Users/zito/Desktop/sampleCoverArt.jpeg");
         //Update Values of a specific Album in the Albums Table
         //ag.update("5","title5","Description 5", 5555, new Artist("NEWfirstfive","NEWlastfive"));
         //Delete specific Album using ISRC from Albums Table
