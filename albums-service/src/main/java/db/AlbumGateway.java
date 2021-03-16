@@ -16,9 +16,9 @@ public class AlbumGateway {
     static Connection connect = null;
 
     public Album find(int isrc) {
-        Connection connect = DBConnect.connect();
+        connect = DBConnect.connect();
         try {
-            String findStr = "SELECT FROM Albums WHERE isrc=" + isrc;
+            String findStr = "SELECT * FROM Albums WHERE isrc=" + isrc;
             Statement findAllStatement = connect.createStatement();
             ResultSet table = findAllStatement.executeQuery(findStr);
 
@@ -137,8 +137,8 @@ public class AlbumGateway {
             }
         }
     }
-    public static void main(String[] args){
+    public static void main(String[] args) {
         AlbumGateway ag = new AlbumGateway();
-        System.out.println(ag.find(1));
+        System.out.println(ag.find(1).getIsrc());
     }
 }
