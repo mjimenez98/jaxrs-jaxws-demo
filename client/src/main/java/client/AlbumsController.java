@@ -7,8 +7,8 @@ import coreClient.Search;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import rest.RestCall;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -18,17 +18,10 @@ public class AlbumsController {
 
     @GetMapping("/albums")
     public String getAlbums(@ModelAttribute Search search, Model model) {
+        List<Album> albums = RestCall.GetAlbums();
+        model.addAttribute("albums", albums);
         model.addAttribute("search", new Search());
 
-        List<Album> albums = new ArrayList<>();
-        albums.add(new Album("1", "2", "3", 4,
-                new Artist("A", "B"),
-                new Cover(null, null)));
-        albums.add(new Album("5", "6", "7", 8,
-                new Artist("A", "B"),
-                new Cover(null, null)));
-
-        model.addAttribute("albums", albums);
         return "albums";
     }
 
@@ -36,9 +29,8 @@ public class AlbumsController {
 
     @GetMapping("/albums/{isrc}")
     public String getAlbum(@PathVariable("isrc") String isrc, Model model) {
-        model.addAttribute("album", new Album("1", "2", "3", 4,
-                new Artist("A", "B"),
-                new Cover(null, null)));
+        Album album = RestCall.GetAlbum(isrc);
+        model.addAttribute("album", album);
         model.addAttribute("isrc", isrc);
 
         return "show";
@@ -54,6 +46,9 @@ public class AlbumsController {
 
     @PostMapping("/albums/new")
     public String newAlbumSubmit(@ModelAttribute Album album, Model model) {
+        album.setCover(new Cover(null, null));
+        RestCall.CreateAlbum(album);
+
         return "redirect:/albums";
     }
 
