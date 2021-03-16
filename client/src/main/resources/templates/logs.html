@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+
+    <title>Albums</title>
+</head>
+<body>
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+
+<div class="container bg-success p-5 mb-3">
+    <h1 class="display-3 text-light text-center">Welcome!</h1>
+</div>
+
+<div class="container">
+    <form th:action="@{/logs}" th:object="${search}" method="GET">
+        <div class="row">
+            <div class="col-md-4">
+                <label for="from">From</label>
+                <input type="date" class="form-control" name="from" id="from" th:field="*{from}">
+            </div>
+            <div class="col-md-4">
+                <label for="to">To</label>
+                <input type="date" class="form-control" name="from" id="to" th:field="*{to}">
+            </div>
+            <div class="col-md-2">
+                <label for="type">Type</label>
+                <select class="form-select" aria-label="Select type" id="type" th:field="*{type}">
+                    <option selected value="none">Open this select menu</option>
+                    <option value="CREATE">Create</option>
+                    <option value="UPDATE">Update</option>
+                    <option value="DELETE">Delete</option>
+                </select>
+            </div>
+            <div class="col-md-2 pt-3 text-center">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Timestamp</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">ISRC</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="log: ${logs}">
+                    <td th:text="${log.getTimestamp()}"></td>
+                    <td th:text="${log.getType()}"></td>
+                    <td th:text="${log.getIsrc()}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
