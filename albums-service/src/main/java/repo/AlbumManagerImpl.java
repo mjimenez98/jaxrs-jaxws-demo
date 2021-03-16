@@ -22,15 +22,6 @@ public class AlbumManagerImpl implements AlbumManager {
 
     private ArrayList<Album> albums = new ArrayList<>();
 
-    //need mime type to render image
-    //don't need to handle every single MIME type
-    //libraries can be used to detect MIME type from extension of the file or from file data
-
-
-    //Sort log entries chronologically by timestamp
-    //All data is received and sent in JSON format
-
-
     //Create Album
     public void createAlbum(Album newAlbum) {
         try {

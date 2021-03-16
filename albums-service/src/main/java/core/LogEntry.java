@@ -1,8 +1,10 @@
 package core;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 
+@XmlRootElement
 public class LogEntry implements Serializable {
     private Date timestamp;
     private ChangeType type;
