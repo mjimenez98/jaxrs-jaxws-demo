@@ -8,12 +8,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 public class AlbumsController {
+
+//    ALL ALBUMS
+
     @GetMapping("/albums")
     public String getAlbums(@ModelAttribute Search search, Model model) {
         model.addAttribute("search", new Search());
@@ -24,5 +28,19 @@ public class AlbumsController {
 
         model.addAttribute("albums", albums);
         return "albums";
+    }
+
+//    NEW ALBUM
+
+    @GetMapping("/albums/new")
+    public String newAlbum(Model model) {
+        model.addAttribute("album", new Album());
+        return "new";
+    }
+
+    @PostMapping("/albums/new")
+    public String newAlbumSubmit(@ModelAttribute Album album, Model model) {
+        System.out.println("WORKING");
+        return "redirect:/albums";
     }
 }
