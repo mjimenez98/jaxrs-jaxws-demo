@@ -1,6 +1,7 @@
 //Sources: https://stackoverflow.com/questions/44520887/how-to-download-a-csv-file-by-streamingoutput
 package service;
 
+import core.Artist;
 import core.Cover;
 import exceptions.RepException;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -35,9 +36,10 @@ public class Albums {
     private void initialize() throws Exception {
         if (isManagerCreated)
             throw new Exception();
+
         isManagerCreated = true;
         AlbumManagerSingleton managerSingleton = AlbumManagerSingleton.INSTANCE;
-        managerSingleton.setAlbumManagerImplementation("business.AlbumManagerImpl");
+        managerSingleton.setAlbumManagerImplementation("repo.AlbumManagerImpl");
         manager = managerSingleton.getAlbumManagerImplementation();
     }
 
@@ -48,6 +50,7 @@ public class Albums {
         try {
             if (!isManagerCreated)
                 initialize();
+
             if (album.getIsrc() == null || album.getTitle() == null || album.getReleaseYear() == 0 ||
                     album.getArtist() == null)
                 throw new RepException("Request could not be processed: Parameter missing");
@@ -74,6 +77,7 @@ public class Albums {
         try {
             if (!isManagerCreated)
                 initialize();
+
             if (album.getIsrc() == null || album.getTitle() == null || album.getReleaseYear() == 0 ||
                     album.getArtist() == null)
                 throw new RepException("Request could not be processed: Parameter missing");
@@ -119,8 +123,14 @@ public class Albums {
         try {
             if (!isManagerCreated)
                 initialize();
+
             Album foundAlbum = manager.getAlbum(isrc);
-            return Response.status(Response.Status.OK).entity(foundAlbum).type(MediaType.APPLICATION_JSON).build();
+            if (foundAlbum == null) {
+                throw new RepException("Album not found!");
+            }
+            else {
+                return Response.status(Response.Status.OK).entity(foundAlbum).type(MediaType.APPLICATION_JSON).build();
+            }
         }
         catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).type(MediaType.APPLICATION_JSON).build();
@@ -137,8 +147,9 @@ public class Albums {
         try {
             if (!isManagerCreated)
                 initialize();
-           ArrayList<Album> albums = manager.getAlbums().stream().sorted(Comparator.comparing(Album::getTitle)).collect(Collectors.toCollection(ArrayList::new));
-           return Response.status(Response.Status.OK).entity(albums).type(MediaType.APPLICATION_JSON).build();
+
+            Album[] albums = manager.getAlbums().stream().sorted(Comparator.comparing(Album::getTitle)).toArray(Album[]::new);
+            return Response.status(Response.Status.OK).entity(albums).type(MediaType.APPLICATION_JSON).build();
         }
         catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).type(MediaType.APPLICATION_JSON).build();
@@ -151,6 +162,9 @@ public class Albums {
     @Produces({MediaType.APPLICATION_JSON})
     public Response updateAlbumCoverImage(FormDataMultiPart input, @PathParam("isrc") String isrc) {
         try {
+            if (!isManagerCreated)
+                initialize();
+
             FormDataBodyPart bodyPart = input.getField("file");
             FormDataContentDisposition fdcd = bodyPart.getFormDataContentDisposition();
             String filename = fdcd.getFileName();
@@ -173,6 +187,7 @@ public class Albums {
         try {
             if (!isManagerCreated)
                 initialize();
+
             Album existingAlbum = manager.getAlbum(isrc);
             if (existingAlbum == null) {
                 throw new RepException("Album not found!");
@@ -193,6 +208,7 @@ public class Albums {
         try {
             if (!isManagerCreated)
                 initialize();
+
             Cover cover = manager.getAlbumCoverImage(isrc);
             StreamingOutput fileStream = new StreamingOutput() {
                 @Override

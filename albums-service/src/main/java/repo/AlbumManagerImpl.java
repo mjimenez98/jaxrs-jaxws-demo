@@ -156,6 +156,3 @@ public class AlbumManagerImpl implements AlbumManager {
         throw new RepException("The method is not yet supported") ;
     }
 }
-
-
-
