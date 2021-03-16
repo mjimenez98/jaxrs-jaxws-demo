@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import rest.RestCall;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Controller
 public class AlbumsController {
@@ -19,6 +21,21 @@ public class AlbumsController {
     @GetMapping("/albums")
     public String getAlbums(@ModelAttribute Search search, Model model) {
         List<Album> albums = RestCall.GetAlbums();
+
+        // Apply filter
+        if (search.getText() != null) {
+            String text = search.getText().toLowerCase(Locale.ROOT);
+
+            albums = albums.stream()
+                    .filter(album ->
+                            album.getTitle().toLowerCase(Locale.ROOT).contains(text) ||
+                                    album.getArtist().getFirstName().toLowerCase(Locale.ROOT).contains(text) ||
+                                    album.getArtist().getLastName().toLowerCase(Locale.ROOT).contains(text) ||
+                                    album.getDescription().toLowerCase(Locale.ROOT).contains(text)
+                    )
+                    .collect(Collectors.toList());
+        }
+
         model.addAttribute("albums", albums);
         model.addAttribute("search", new Search());
 
