@@ -17,7 +17,7 @@ import java.util.List;
 @Controller
 public class AlbumsController {
 
-//    ALL ALBUMS
+//    INDEX
 
     @GetMapping("/albums")
     public String getAlbums(@ModelAttribute Search search, Model model) {
@@ -35,7 +35,18 @@ public class AlbumsController {
         return "albums";
     }
 
-//    NEW ALBUM
+//    SHOW
+
+    @GetMapping("/albums/{isrc}")
+    public String getAlbum(@PathVariable("isrc") String isrc, Model model) {
+        model.addAttribute("album", new Album("1", "2", "3", 4,
+                new Artist("A", "B"),
+                new Cover(null, null)));
+
+        return "show";
+    }
+
+//    NEW
 
     @GetMapping("/albums/new")
     public String newAlbum(Model model) {
@@ -48,7 +59,7 @@ public class AlbumsController {
         return "redirect:/albums";
     }
 
-//    EDIT ALBUM
+//    EDIT
 
     @GetMapping("/albums/edit/{isrc}")
     public String editAlbum(@PathVariable("isrc") String isrc, Model model) {
