@@ -22,27 +22,27 @@
         <div class="row">
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
-                <input type="text" class="form-control" id="title" aria-describedby="title">
+                <input type="text" class="form-control" id="title" aria-describedby="title" th:field="${album.title}">
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
-                <input type="text" class="form-control" id="description" aria-describedby="description">
+                <input type="text" class="form-control" id="description" aria-describedby="description" th:field="${album.description}">
             </div>
             <div class="mb-3">
                 <label for="isrc" class="form-label">ISRC</label>
-                <input type="text" class="form-control" id="isrc" aria-describedby="isrc">
+                <input type="text" class="form-control" id="isrc" aria-describedby="isrc" th:field="${album.isrc}">
             </div>
             <div class="mb-3">
                 <label for="release" class="form-label">Release year</label>
-                <input type="text" class="form-control" id="release" aria-describedby="release">
+                <input type="text" class="form-control" id="release" aria-describedby="release" value="2020" th:field="${album.releaseYear}">
             </div>
             <div class="mb-3">
                 <label for="firstName" class="form-label">Artist first name</label>
-                <input type="text" class="form-control" id="firstName" aria-describedby="firstName">
+                <input type="text" class="form-control" id="firstName" aria-describedby="firstName" th:field="${album.artist.firstName}">
             </div>
             <div class="mb-3">
                 <label for="lastName" class="form-label">Artist last name</label>
-                <input type="text" class="form-control" id="lastName" aria-describedby="lastName">
+                <input type="text" class="form-control" id="lastName" aria-describedby="lastName" th:field="${album.artist.lastName}">
             </div>
             <div class="mb-3">
                 <label for="cover" class="form-label">Cover</label>

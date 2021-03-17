@@ -37,14 +37,14 @@
 <div class="container">
     <div class="row">
         <div class="col-3">
-            <form th:action="@{/albums/edit/${isrc}}" method="GET">
+            <form th:action="@{/albums/edit/{isrc}(isrc=${album.getIsrc()})}" method="GET">
                 <div class="mb-2">
                     <button type="submit" class="btn btn-primary">Edit</button>
                 </div>
             </form>
         </div>
         <div class="col-3">
-            <form th:action="@{/albums/delete/${isrc}}" method="GET">
+            <form th:action="@{/albums/delete/{isrc}(isrc=${album.getIsrc()})}" method="GET">
                 <div class="mb-2">
                     <button type="submit" class="btn btn-primary">Delete</button>
                 </div>

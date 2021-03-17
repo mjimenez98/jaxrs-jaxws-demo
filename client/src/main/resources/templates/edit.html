@@ -22,27 +22,31 @@
         <div class="row">
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
-                <input type="text" class="form-control" id="title" aria-describedby="title" th:value="${album.getTitle()}">
+                <input type="text" class="form-control" id="title" aria-describedby="title" th:value="${album.getTitle()}"
+                       th:field="${album.title}">
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
-                <input type="text" class="form-control" id="description" aria-describedby="description" th:value="${album.getDescription()}">
+                <input type="text" class="form-control" id="description" aria-describedby="description" th:value="${album.getDescription()}"
+                       th:field="${album.description}">
             </div>
             <div class="mb-3">
                 <label for="isrc" class="form-label">ISRC</label>
-                <input type="text" class="form-control" id="isrc" aria-describedby="isrc" th:value="${album.getIsrc()}" readonly>
+                <input type="text" class="form-control" id="isrc" aria-describedby="isrc" th:value="${album.getIsrc()}"
+                       th:field="${album.isrc}" readonly>
             </div>
             <div class="mb-3">
                 <label for="release" class="form-label">Release year</label>
-                <input type="text" class="form-control" id="release" aria-describedby="release" th:value="${album.getReleaseYear()}">
+                <input type="text" class="form-control" id="release" aria-describedby="release" th:value="${album.getReleaseYear()}" th:field="${album.releaseYear}">
             </div>
             <div class="mb-3">
                 <label for="firstName" class="form-label">Artist first name</label>
-                <input type="text" class="form-control" id="firstName" aria-describedby="firstName" th:value="${album.getArtist().getFirstName()}">
+                <input type="text" class="form-control" id="firstName" aria-describedby="firstName" th:value="${album.getArtist().getFirstName()}"
+                       th:field="${album.artist.firstName}">
             </div>
             <div class="mb-3">
                 <label for="lastName" class="form-label">Artist last name</label>
-                <input type="text" class="form-control" id="lastName" aria-describedby="lastName" th:value="${album.getArtist().getLastName()}">
+                <input type="text" class="form-control" id="lastName" aria-describedby="lastName" th:value="${album.getArtist().getLastName()}" th:field="${album.artist.lastName}">
             </div>
             <div class="mb-3">
                 <label for="cover" class="form-label">Cover</label>
