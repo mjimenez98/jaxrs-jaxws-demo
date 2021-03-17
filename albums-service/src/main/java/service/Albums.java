@@ -4,17 +4,16 @@ package service;
 import core.Artist;
 import core.Cover;
 import exceptions.RepException;
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.*;
+import org.glassfish.jersey.server.ResourceConfig;
 import repo.AlbumManagerImpl;
 import core.Album;
 import repo.AlbumManagerSingleton;
 
+import javax.imageio.ImageIO;
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
+import javax.ws.rs.core.*;
+import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -31,6 +30,7 @@ import java.util.stream.Collectors;
 public class Albums {
     private static AlbumManagerImpl manager;
     private static boolean isManagerCreated = false;
+    private static String BASE = "/Users/dina/Documents/GitHub/jaxrs-jaxws-demo/albums-service/src/covers";
     private static final String COVERS_PATH = "/covers";
 
     private void initialize() throws Exception {
@@ -44,22 +44,32 @@ public class Albums {
     }
 
     @POST
-    @Consumes({MediaType.APPLICATION_JSON})
+    //@Consumes({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.MULTIPART_FORM_DATA})
     @Produces({MediaType.APPLICATION_JSON})
-    public Response addAlbum(Album album) {
+    public Response addAlbum(@FormDataParam("album") FormDataBodyPart albumJson,
+                             @FormDataParam("file") FormDataBodyPart coverFile) {
         try {
             if (!isManagerCreated)
                 initialize();
 
+            albumJson.setMediaType(MediaType.APPLICATION_JSON_TYPE);
+            Album album = albumJson.getValueAs(Album.class);
             if (album.getIsrc() == null || album.getTitle() == null || album.getReleaseYear() == 0 ||
                     album.getArtist() == null)
                 throw new RepException("Request could not be processed: Parameter missing");
-
             Album existingAlbum = manager.getAlbum(album.getIsrc());
-
             if (existingAlbum == null) {
                 Album newAlbum = new Album(album);
                 manager.createAlbum(newAlbum);
+                InputStream is = coverFile.getEntityAs(InputStream.class);
+                FormDataContentDisposition fd = coverFile.getFormDataContentDisposition();
+                String fileName = fd.getFileName();
+                MediaType md = coverFile.getMediaType();
+                System.out.println(fileName);
+                System.out.println(md.toString());
+                String fileLocation = BASE + "/" + fileName;
+                manager.updateAlbumCoverImage(is, fileLocation, album.getIsrc());
             } else {
                 throw new RepException("Album already exists!");
             }
@@ -160,19 +170,14 @@ public class Albums {
     @Path("{isrc}")
     @Consumes({MediaType.MULTIPART_FORM_DATA})
     @Produces({MediaType.APPLICATION_JSON})
-    public Response updateAlbumCoverImage(FormDataMultiPart input, @PathParam("isrc") String isrc) {
+    public Response updateAlbumCoverImage(@FormDataParam("file") InputStream fileInputStream,
+                                          @FormDataParam("file") FormDataContentDisposition cdh,
+                                          @PathParam("isrc") String isrc) {
         try {
             if (!isManagerCreated)
                 initialize();
-
-            FormDataBodyPart bodyPart = input.getField("file");
-            FormDataContentDisposition fdcd = bodyPart.getFormDataContentDisposition();
-            String filename = fdcd.getFileName();
-            MediaType mimeType = bodyPart.getMediaType();
-            System.out.println("mimeType: " + mimeType);
-            InputStream body = bodyPart.getValueAs(InputStream.class);
-            String fileLocation = COVERS_PATH + "/" + isrc + "/" + filename;
-            manager.updateAlbumCoverImage(body, fileLocation, mimeType, isrc);
+            String fileLocation = BASE + "/" + cdh.getFileName();
+            manager.updateAlbumCoverImage(fileInputStream, fileLocation, isrc);
             return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).build();
         }
         catch (Exception e) {

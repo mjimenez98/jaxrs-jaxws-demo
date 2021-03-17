@@ -82,7 +82,7 @@ public class AlbumManagerImpl implements AlbumManager {
 
 
     //Update Album Cover Image
-    public void updateAlbumCoverImage(InputStream newCover, String location, MediaType mimeType, String isrc){
+    public void updateAlbumCoverImage(InputStream newCover, String location, String isrc){
         try {
             int read = 0;
             byte[] bytes = new byte[1024];
@@ -94,7 +94,7 @@ public class AlbumManagerImpl implements AlbumManager {
             out.close();
             Album album = getAlbum(isrc);
             if (album != null) {
-                album.setCover(new Cover(location, mimeType));
+                album.setCover(new Cover(location, null));
                 logs.add(new LogEntry(new Date(), ChangeType.UPDATE, isrc));
             }
         }
