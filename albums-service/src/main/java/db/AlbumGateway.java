@@ -1,17 +1,8 @@
 package db;
 import core.*;
 
-import javax.activation.MimeType;
-import javax.print.attribute.standard.Media;
-import javax.ws.rs.core.MediaType;
-import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.URLConnection;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.sql.*;
 import java.util.ArrayList;
 
