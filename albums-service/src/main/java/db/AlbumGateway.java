@@ -33,18 +33,24 @@ public class AlbumGateway {
     public void createAlbum(String isrc, String title, String description, int releaseYear, Artist artist){
         connect = DBConnect.connect();
         try{
-
-            String insertStr = "INSERT INTO Albums (isrc, title, description, year, firstname, lastname) VALUES(?,?,?,?,?,?)";
-            PreparedStatement insertStatement = connect.prepareStatement(insertStr);
-            insertStatement.setString(1, isrc);
-            insertStatement.setString(2, title);
-            insertStatement.setString(3, description);
-            insertStatement.setInt(4, releaseYear);
-            insertStatement.setString(5, artist.getFirstName());
-            insertStatement.setString(6, artist.getLastName());
-            insertStatement.executeUpdate();
-            System.out.println(insertStr);
-
+            String findStr = "SELECT * FROM Albums WHERE isrc=" + isrc;
+            Statement checkStatement = connect.createStatement();
+            ResultSet checkTable = checkStatement.executeQuery(findStr);
+            if(!checkTable.next()) {
+                String insertStr = "INSERT INTO Albums (isrc, title, description, year, firstname, lastname) VALUES(?,?,?,?,?,?)";
+                PreparedStatement insertStatement = connect.prepareStatement(insertStr);
+                insertStatement.setString(1, isrc);
+                insertStatement.setString(2, title);
+                insertStatement.setString(3, description);
+                insertStatement.setInt(4, releaseYear);
+                insertStatement.setString(5, artist.getFirstName());
+                insertStatement.setString(6, artist.getLastName());
+                insertStatement.executeUpdate();
+                System.out.println(insertStr);
+            }
+            else{
+                System.out.println("Album with isrc: " + isrc + ", already exists.");
+            }
         }
         catch (Exception e){
             e.printStackTrace();
@@ -60,21 +66,30 @@ public class AlbumGateway {
     }
     public void createAlbumWithCover(String isrc, String title, String description, int releaseYear, Artist artist, String pathname){
         connect = DBConnect.connect();
+
         try{
-            String insertStr = "INSERT INTO Albums (isrc, title, description, year, firstname, lastname, coverart, mimetype) VALUES(?,?,?,?,?,?,?,?)";
-            File artFile = new File(pathname);
-            String mimeType = extractMimeType(pathname);
-            FileInputStream fileIn = new FileInputStream(artFile);
-            PreparedStatement insertStatement = connect.prepareStatement(insertStr);
-            insertStatement.setString(1, isrc);
-            insertStatement.setString(2, title);
-            insertStatement.setString(3, description);
-            insertStatement.setInt(4, releaseYear);
-            insertStatement.setString(5, artist.getFirstName());
-            insertStatement.setString(6, artist.getLastName());
-            insertStatement.setBinaryStream(7, fileIn);
-            insertStatement.setString(8, mimeType);
-            insertStatement.executeUpdate();
+            String findStr = "SELECT * FROM Albums WHERE isrc=" + isrc;
+            Statement checkStatement = connect.createStatement();
+            ResultSet checkTable = checkStatement.executeQuery(findStr);
+            if(!checkTable.next()) {
+                String insertStr = "INSERT INTO Albums (isrc, title, description, year, firstname, lastname, coverart, mimetype) VALUES(?,?,?,?,?,?,?,?)";
+                File artFile = new File(pathname);
+                String mimeType = extractMimeType(pathname);
+                FileInputStream fileIn = new FileInputStream(artFile);
+                PreparedStatement insertStatement = connect.prepareStatement(insertStr);
+                insertStatement.setString(1, isrc);
+                insertStatement.setString(2, title);
+                insertStatement.setString(3, description);
+                insertStatement.setInt(4, releaseYear);
+                insertStatement.setString(5, artist.getFirstName());
+                insertStatement.setString(6, artist.getLastName());
+                insertStatement.setBinaryStream(7, fileIn);
+                insertStatement.setString(8, mimeType);
+                insertStatement.executeUpdate();
+            }
+            else{
+                System.out.println("Album with isrc: " + isrc + ", already exists.");
+            }
         }
         catch (Exception e){
             e.printStackTrace();
@@ -91,17 +106,25 @@ public class AlbumGateway {
     public void updateAlbum(String isrc, String title, String description, int releaseYear, Artist artist){
         connect = DBConnect.connect();
         try{
-            String updateStr = "UPDATE Albums SET isrc=?, title=?, description=?, year=?, firstname=?, lastname=? WHERE isrc=?;";
-            PreparedStatement updateStatement = connect.prepareStatement(updateStr);
-            updateStatement.setString(1, isrc);
-            updateStatement.setString(2, title);
-            updateStatement.setString(3, description);
-            updateStatement.setInt(4, releaseYear);
-            updateStatement.setString(5, artist.getFirstName());
-            updateStatement.setString(6, artist.getLastName());
-            updateStatement.setString(7, isrc);
-            updateStatement.executeUpdate();
-            System.out.println(updateStr);
+            String findStr = "SELECT * FROM Albums WHERE isrc=" + isrc;
+            Statement checkStatement = connect.createStatement();
+            ResultSet checkTable = checkStatement.executeQuery(findStr);
+            if(checkTable.next()) {
+                String updateStr = "UPDATE Albums SET isrc=?, title=?, description=?, year=?, firstname=?, lastname=? WHERE isrc=?;";
+                PreparedStatement updateStatement = connect.prepareStatement(updateStr);
+                updateStatement.setString(1, isrc);
+                updateStatement.setString(2, title);
+                updateStatement.setString(3, description);
+                updateStatement.setInt(4, releaseYear);
+                updateStatement.setString(5, artist.getFirstName());
+                updateStatement.setString(6, artist.getLastName());
+                updateStatement.setString(7, isrc);
+                updateStatement.executeUpdate();
+                System.out.println(updateStr);
+            }
+            else{
+                System.out.println("Album with isrc: " + isrc + ", does not exist.");
+            }
         }
         catch (Exception e){
             e.printStackTrace();
@@ -118,9 +141,17 @@ public class AlbumGateway {
     public void deleteAlbum(String isrc) {
         connect = DBConnect.connect();
         try{
-            Statement deleteStatement = connect.createStatement();
-            String deleteStr = "DELETE FROM Albums WHERE isrc=" + isrc;
-            deleteStatement.executeUpdate(deleteStr);
+            String findStr = "SELECT * FROM Albums WHERE isrc=" + isrc;
+            Statement checkStatement = connect.createStatement();
+            ResultSet checkTable = checkStatement.executeQuery(findStr);
+            if(checkTable.next()) {
+                Statement deleteStatement = connect.createStatement();
+                String deleteStr = "DELETE FROM Albums WHERE isrc=" + isrc;
+                deleteStatement.executeUpdate(deleteStr);
+            }
+            else{
+                System.out.println("Album with isrc: " + isrc + ", does not exist.");
+            }
         }
         catch (Exception e){
             e.printStackTrace();
@@ -137,19 +168,26 @@ public class AlbumGateway {
     public Album getAlbumInfo(String isrc) {
         connect = DBConnect.connect();
         try {
-            String findStr = "SELECT * FROM Albums WHERE isrc=" + isrc;
-            Statement findAllStatement = connect.createStatement();
-            ResultSet table = findAllStatement.executeQuery(findStr);
-
-            if (table.next()) {
-                String isrc1 = table.getString("isrc");
-                String title = table.getString("title");
-                String description = table.getString("description");
-                int releaseYear = table.getInt("year");
-                String firstname = table.getString("firstname");
-                String lastname = table.getString("lastname");
-                Album album = new Album(isrc1, title, description, releaseYear, new Artist(firstname, lastname), new Cover());
-                return album;
+            String checkStr = "SELECT * FROM Albums WHERE isrc=" + isrc;
+            Statement checkStatement = connect.createStatement();
+            ResultSet checkTable = checkStatement.executeQuery(checkStr);
+            if(checkTable.next()) {
+                String findStr = "SELECT * FROM Albums WHERE isrc=" + isrc;
+                Statement findAllStatement = connect.createStatement();
+                ResultSet table = findAllStatement.executeQuery(findStr);
+                if (table.next()) {
+                    String isrc1 = table.getString("isrc");
+                    String title = table.getString("title");
+                    String description = table.getString("description");
+                    int releaseYear = table.getInt("year");
+                    String firstname = table.getString("firstname");
+                    String lastname = table.getString("lastname");
+                    Album album = new Album(isrc1, title, description, releaseYear, new Artist(firstname, lastname), new Cover());
+                    return album;
+                }
+                else{
+                    System.out.println("Album with isrc: " + isrc + ", does not exist.");
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -199,15 +237,23 @@ public class AlbumGateway {
     public void updateAlbumCover(String isrc, String pathname){
         connect = DBConnect.connect();
         try{
-            String updateStr = "UPDATE Albums SET coverart=?, mimetype=? WHERE isrc=?;";
-            File artFile = new File(pathname);
-            String mimeType = extractMimeType(pathname);
-            FileInputStream fileIn = new FileInputStream(artFile);
-            PreparedStatement updateStatement = connect.prepareStatement(updateStr);
-            updateStatement.setBinaryStream(1, fileIn);
-            updateStatement.setString(2, mimeType);
-            updateStatement.setString(3, isrc);
-            updateStatement.executeUpdate();
+            String findStr = "SELECT * FROM Albums WHERE isrc=" + isrc;
+            Statement checkStatement = connect.createStatement();
+            ResultSet checkTable = checkStatement.executeQuery(findStr);
+            if(checkTable.next()) {
+                String updateStr = "UPDATE Albums SET coverart=?, mimetype=? WHERE isrc=?;";
+                File artFile = new File(pathname);
+                String mimeType = extractMimeType(pathname);
+                FileInputStream fileIn = new FileInputStream(artFile);
+                PreparedStatement updateStatement = connect.prepareStatement(updateStr);
+                updateStatement.setBinaryStream(1, fileIn);
+                updateStatement.setString(2, mimeType);
+                updateStatement.setString(3, isrc);
+                updateStatement.executeUpdate();
+            }
+            else{
+                System.out.println("Album with isrc: " + isrc + ", does not exist.");
+            }
         }
         catch (Exception e){
             e.printStackTrace();
@@ -224,14 +270,22 @@ public class AlbumGateway {
     public void deleteAlbumCover(String isrc) {
         connect = DBConnect.connect();
         try{
-            String deleteStr = "UPDATE Albums SET coverart=?, mimetype=? WHERE isrc=?;";
-            PreparedStatement deleteStatement = connect.prepareStatement(deleteStr);
-            deleteStatement.setNull(1, java.sql.Types.BLOB);
-            deleteStatement.setNull(2, Types.VARCHAR);
-            deleteStatement.setString(3, isrc);
-            System.out.println(deleteStatement);
-            deleteStatement.executeUpdate();
-            deleteStatement.executeUpdate(deleteStr);
+            String findStr = "SELECT * FROM Albums WHERE isrc=" + isrc;
+            Statement checkStatement = connect.createStatement();
+            ResultSet checkTable = checkStatement.executeQuery(findStr);
+            if(checkTable.next()) {
+                String deleteStr = "UPDATE Albums SET coverart=?, mimetype=? WHERE isrc=?;";
+                PreparedStatement deleteStatement = connect.prepareStatement(deleteStr);
+                deleteStatement.setNull(1, java.sql.Types.BLOB);
+                deleteStatement.setNull(2, Types.VARCHAR);
+                deleteStatement.setString(3, isrc);
+                System.out.println(deleteStatement);
+                deleteStatement.executeUpdate();
+                deleteStatement.executeUpdate(deleteStr);
+            }
+            else{
+                System.out.println("Album with isrc: " +  isrc + ", does not exist.");
+            }
         }
         catch (Exception e){
             e.printStackTrace();
@@ -248,15 +302,23 @@ public class AlbumGateway {
     public Cover getAlbumCover(String isrc) {
         connect = DBConnect.connect();
         try {
-            Statement findCoverStatement = connect.createStatement();
-            String findStr = "SELECT coverart, mimetype FROM Albums WHERE isrc=" + isrc;
-            ResultSet table = findCoverStatement.executeQuery(findStr);
+            String checkStr = "SELECT * FROM Albums WHERE isrc=" + isrc;
+            Statement checkStatement = connect.createStatement();
+            ResultSet checkTable = checkStatement.executeQuery(checkStr);
+            if(checkTable.next()) {
+                Statement findCoverStatement = connect.createStatement();
+                String findStr = "SELECT coverart, mimetype FROM Albums WHERE isrc=" + isrc;
+                ResultSet table = findCoverStatement.executeQuery(findStr);
 
-            if(table.next()){
-                Blob blob = table.getBlob("coverart");
-                String mimeType = table.getString("mimetype");
-                Cover cover = new Cover(blob,mimeType);
-                return cover;
+                if (table.next()) {
+                    Blob blob = table.getBlob("coverart");
+                    String mimeType = table.getString("mimetype");
+                    Cover cover = new Cover(blob, mimeType);
+                    return cover;
+                }
+            }
+            else {
+                System.out.println("Album with isrc: " + isrc + ", does not exist");
             }
 
         } catch (Exception e) {
@@ -274,7 +336,7 @@ public class AlbumGateway {
     // For Testing
     public static void main(String[] args) {
         //Declaring AlbumGateway Object
-        AlbumGateway ag = new AlbumGateway();
+        //AlbumGateway ag = new AlbumGateway();
         //Find Album by ISRC
         //System.out.println(ag.getAlbumInfo("5"));
         //System.out.println(ag.getAlbumCover("5").getMimeType());
