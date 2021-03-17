@@ -22,16 +22,16 @@
         <div class="row">
             <div class="col-md-4">
                 <label for="from">From</label>
-                <input type="date" class="form-control" name="from" id="from" th:field="${search.from}">
+                <input type="datetime-local" class="form-control" name="from" id="from" th:field="${search.from}">
             </div>
             <div class="col-md-4">
                 <label for="to">To</label>
-                <input type="date" class="form-control" name="from" id="to" th:field="${search.to}">
+                <input type="datetime-local" class="form-control" name="from" id="to" th:field="${search.to}">
             </div>
             <div class="col-md-2">
                 <label for="type">Type</label>
                 <select class="form-select" aria-label="Select type" id="type" th:field="${search.type}">
-                    <option selected value="none">Open this select menu</option>
+                    <option selected value="NULL">Open this select menu</option>
                     <option value="CREATE">Create</option>
                     <option value="UPDATE">Update</option>
                     <option value="DELETE">Delete</option>
