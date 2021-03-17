@@ -224,10 +224,12 @@ public class AlbumGateway {
     public void deleteAlbumCover(String isrc) {
         connect = DBConnect.connect();
         try{
-            String deleteStr = "UPDATE Albums SET coverart=? WHERE isrc=?;";
+            String deleteStr = "UPDATE Albums SET coverart=?, mimetype=? WHERE isrc=?;";
             PreparedStatement deleteStatement = connect.prepareStatement(deleteStr);
-            deleteStatement.setBinaryStream(1, null);
-            deleteStatement.setString(2, isrc);
+            deleteStatement.setNull(1, java.sql.Types.BLOB);
+            deleteStatement.setNull(2, Types.VARCHAR);
+            deleteStatement.setString(3, isrc);
+            System.out.println(deleteStatement);
             deleteStatement.executeUpdate();
             deleteStatement.executeUpdate(deleteStr);
         }
@@ -247,7 +249,7 @@ public class AlbumGateway {
         connect = DBConnect.connect();
         try {
             Statement findCoverStatement = connect.createStatement();
-            String findStr = "SELECT coverart FROM Albums WHERE isrc=" + isrc;
+            String findStr = "SELECT coverart, mimetype FROM Albums WHERE isrc=" + isrc;
             ResultSet table = findCoverStatement.executeQuery(findStr);
 
             if(table.next()){
@@ -274,16 +276,19 @@ public class AlbumGateway {
         //Declaring AlbumGateway Object
         AlbumGateway ag = new AlbumGateway();
         //Find Album by ISRC
-        //System.out.println(ag.getAlbumInfo("1").getReleaseYear());
+        //System.out.println(ag.getAlbumInfo("5"));
+        //System.out.println(ag.getAlbumCover("5").getMimeType());
         //Find All Albums
-        //System.out.println(ag.getAlbumList().get(4).getCover().getFile());
+        //System.out.println(ag.getAlbumsList().get(4));
         //Insert Values into Albums Table
         //ag.createAlbum("5","title5","Description 5", 5555, new Artist("firstfive","lastfive"));
-        //ag.createAlbumWithCover("5","title5","Description 5", 5555, new Artist("firstfive","lastfive"), "/Users/username/Desktop/sampleCoverArt.jpeg");
+        //ag.createAlbumWithCover("5","title5","Description 5", 5555, new Artist("firstfive","lastfive"), "/Users/zito/Desktop/sampleCoverArt.jpeg");
         //Update Values of a specific Album in the Albums Table
         //ag.updateAlbum("5","title5","Description 5", 5555, new Artist("NEWfirstfive","NEWlastfive"));
+        //ag.updateAlbumCover("5","/Users/zito/Desktop/SAC2.jpeg");
         //Delete specific Album using ISRC from Albums Table
         //ag.deleteAlbum("5");
+        //ag.deleteAlbumCover("5");
         //GetAlbumCover
         //System.out.println(ag.getAlbumCover("5"));
         //System.out.println(ag.getAlbumCover("5").getMimeType());
