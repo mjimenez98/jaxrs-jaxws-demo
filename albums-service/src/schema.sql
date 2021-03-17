@@ -10,6 +10,7 @@ CREATE TABLE `Albums` (
   `firstname` varchar(45) NOT NULL,
   `lastname` varchar(45) NOT NULL,
   `coverart` blob,
+  `mimetype` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`isrc`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
