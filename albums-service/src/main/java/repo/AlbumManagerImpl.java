@@ -26,9 +26,9 @@ public class AlbumManagerImpl implements AlbumManager {
     public void createAlbum(Album newAlbum) {
         try {
             albums.add(newAlbum);
-           logs.add(new LogEntry(new Date(), ChangeType.CREATE, newAlbum.getIsrc()));
+            logs.add(new LogEntry(new Date(), ChangeType.CREATE, newAlbum.getIsrc()));
         }
-        catch(Exception e){
+        catch(Exception e) {
             throw new RepException(e.getMessage());
         }
     }
@@ -41,7 +41,7 @@ public class AlbumManagerImpl implements AlbumManager {
             createAlbum(album);
             logs.add(new LogEntry(new Date(), ChangeType.UPDATE, album.getIsrc()));
         }
-        catch(Exception e){
+        catch(Exception e) {
             throw new RepException(e.getMessage());
         }
     }
@@ -55,7 +55,7 @@ public class AlbumManagerImpl implements AlbumManager {
                     .collect(Collectors.toCollection(ArrayList::new));
             logs.add(new LogEntry(new Date(), ChangeType.DELETE, isrc));
         }
-        catch(Exception e){
+        catch(Exception e) {
             throw new RepException(e.getMessage());
         }
     }

@@ -1,11 +1,9 @@
 package coreClient;
 
-import java.util.Date;
-
 public class SearchLog {
-    String from;
-    String to;
-    ChangeType type;
+    private String from;
+    private String to;
+    private ChangeType type;
 
     public SearchLog() {
         from = null;

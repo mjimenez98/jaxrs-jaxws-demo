@@ -1,7 +1,9 @@
 package coreClient;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
 
+@XmlRootElement
 public class LogEntry {
     private Date timestamp;
     private ChangeType type;

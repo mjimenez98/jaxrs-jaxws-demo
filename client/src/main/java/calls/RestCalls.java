@@ -1,4 +1,4 @@
-package rest;
+package calls;
 
 import coreClient.Album;
 import org.springframework.http.HttpHeaders;
@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-public class RestCall {
+public class RestCalls {
     private static final WebClient webClient = WebClient.builder()
             .baseUrl("http://localhost:8080")
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
