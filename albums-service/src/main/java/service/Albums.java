@@ -32,8 +32,8 @@ import java.util.stream.Collectors;
 public class Albums {
     private static AlbumManagerImpl manager;
     private static boolean isManagerCreated = false;
-    private static String BASE = "/Users/dina/Documents/GitHub/jaxrs-jaxws-demo/albums-service/src/covers";
-    private static final String COVERS_PATH = "/covers";
+    //private static String BASE = "/Users/dina/Documents/GitHub/jaxrs-jaxws-demo/albums-service/src/covers";
+    //private static final String COVERS_PATH = "/covers";
 
     private void initialize() throws Exception {
         if (isManagerCreated)
@@ -65,9 +65,9 @@ public class Albums {
                 manager.createAlbum(newAlbum);
                 InputStream is = coverFile.getEntityAs(InputStream.class);
                 FormDataContentDisposition fd = coverFile.getFormDataContentDisposition();
-                String fileName = fd.getFileName();
+                //String fileName = fd.getFileName();
                 MediaType md = coverFile.getMediaType();
-                String fileLocation = BASE + "/" + fileName;
+                //String fileLocation = BASE + "/" + fileName;
                 manager.updateAlbumCoverImage(is, album.getIsrc(), md);
             } else {
                 throw new RepException("Album already exists!");
