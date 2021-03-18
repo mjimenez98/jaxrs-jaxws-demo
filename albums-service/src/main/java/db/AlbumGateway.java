@@ -115,7 +115,7 @@ public class AlbumGateway {
                     int releaseYear = table.getInt("year");
                     String firstname = table.getString("firstname");
                     String lastname = table.getString("lastname");
-                    Album album = new Album(isrc1, title, description, releaseYear, new Artist(firstname, lastname), new Cover());
+                    Album album = new Album(description, isrc1, title, releaseYear, new Artist(firstname, lastname), new Cover());
                     return album;
                 }
                 else{
