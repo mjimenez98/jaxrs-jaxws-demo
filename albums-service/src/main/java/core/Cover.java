@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.sql.Blob;
 
 public class Cover {
-
     private InputStream blob;
     private String mimeType;
 
@@ -29,7 +28,6 @@ public class Cover {
         this.mimeType = cover.mimeType;
     }
 
-
     public String getMimeType() {
         return mimeType;
     }
@@ -41,8 +39,8 @@ public class Cover {
     public InputStream getBlob() {
         return blob;
     }
+
     public void setBlob(InputStream blob) {
         this.blob = blob;
     }
-
 }

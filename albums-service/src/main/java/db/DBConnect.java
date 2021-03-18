@@ -9,20 +9,19 @@ public class DBConnect {
     static Connection connect = null;
 
     public static Connection connect() {
-
         try {
             Class.forName(JDBC_DRIVER);
             connect = DriverManager.getConnection(DBURL, DBUSER, DBPASS);
             return connect;
-        } catch (SQLException e){
+        } catch (SQLException e) {
             throw new RuntimeException("ERROR: Failed to connect.", e);
-        } catch (ClassNotFoundException e){
+        } catch (ClassNotFoundException e) {
             throw new RuntimeException("ERROR: Class not found", e);
         }
     }
 
     public static void disconnect() throws SQLException {
-        if(connect != null){
+        if (connect != null){
             connect.close();
         }
     }

@@ -1,29 +1,19 @@
 //Sources: https://stackoverflow.com/questions/44520887/how-to-download-a-csv-file-by-streamingoutput
 package service;
 
-import core.Artist;
 import core.Cover;
 import exceptions.RepException;
 import org.glassfish.jersey.media.multipart.*;
-import org.glassfish.jersey.server.ResourceConfig;
 import repo.AlbumManagerImpl;
 import core.Album;
 import repo.AlbumManagerSingleton;
 
-import javax.imageio.ImageIO;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.sql.Blob;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.stream.Collectors;
 
 /**
  * Root resource (exposed at "albums" path)
@@ -56,16 +46,22 @@ public class Albums {
 
             albumJson.setMediaType(MediaType.APPLICATION_JSON_TYPE);
             Album album = albumJson.getValueAs(Album.class);
+
             if (album.getIsrc() == null || album.getTitle() == null || album.getReleaseYear() == 0 ||
-                    album.getArtist() == null)
+                    album.getArtist() == null) {
                 throw new RepException("Request could not be processed: Parameter missing");
+            }
+
             Album existingAlbum = manager.getAlbum(album.getIsrc());
             if (existingAlbum == null) {
                 Album newAlbum = new Album(album);
                 manager.createAlbum(newAlbum);
+
                 InputStream is = coverFile.getEntityAs(InputStream.class);
+
                 FormDataContentDisposition fd = coverFile.getFormDataContentDisposition();
                 //String fileName = fd.getFileName();
+
                 MediaType md = coverFile.getMediaType();
                 //String fileLocation = BASE + "/" + fileName;
                 manager.updateAlbumCoverImage(is, album.getIsrc(), md);

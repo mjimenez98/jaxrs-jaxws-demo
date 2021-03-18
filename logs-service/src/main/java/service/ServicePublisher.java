@@ -13,7 +13,7 @@ import java.io.IOException;
 public class ServicePublisher {
 
     static int port = 8090;
-    static String servicePath = "/calculator";
+    static String servicePath = "/logEntries";
     static String BASE_URI = "http://localhost:" + port + servicePath;
 
     /**
@@ -25,7 +25,7 @@ public class ServicePublisher {
         System.out.println("SOAP Service listening on " + BASE_URI + "?wsdl");
 
         NetworkListener networkListener = new NetworkListener("jaxws-listener", "0.0.0.0", port);
-        HttpHandler httpHandler = new JaxwsHandler(new CalculatorImpl());
+        HttpHandler httpHandler = new JaxwsHandler(new LogEntriesImpl());
 
         HttpServer httpServer = new HttpServer();
         httpServer.getServerConfiguration().addHttpHandler(httpHandler, servicePath);

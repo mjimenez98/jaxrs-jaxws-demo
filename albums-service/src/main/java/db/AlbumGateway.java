@@ -1,12 +1,11 @@
 package db;
+
 import core.*;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.sql.*;
 import java.util.ArrayList;
 
-//Using Table Data Gateway, gateway handles all SQL for business layer.
+// Using Table Data Gateway, gateway handles all SQL for business layer.
 public class AlbumGateway {
     static Connection connect = null;
 

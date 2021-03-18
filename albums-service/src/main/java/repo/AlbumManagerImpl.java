@@ -8,13 +8,9 @@ import core.LogEntry;
 import db.AlbumGateway;
 import exceptions.RepException;
 
-import javax.ws.rs.PUT;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.StreamingOutput;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
