@@ -6,6 +6,8 @@ import core.Cover;
 import core.LogEntry;
 import exceptions.RepException;
 
+import javax.ws.rs.core.MediaType;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -14,6 +16,10 @@ public interface AlbumManager {
     public void deleteAlbum(String isrc);
     public Album getAlbum(String isrc);
     public ArrayList<Album> getAlbums();
+
+    //Update Album Cover Image
+    void updateAlbumCoverImage(InputStream newCover, String location, String isrc, MediaType md);
+
     public void deleteAlbumCoverImage(String isrc);
     public Cover getAlbumCoverImage(String isrc);
     public ArrayList<LogEntry> getChangeLogs(Date from, Date to, ChangeType changeType);

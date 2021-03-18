@@ -44,7 +44,6 @@ public class Albums {
     }
 
     @POST
-    //@Consumes({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.MULTIPART_FORM_DATA})
     @Produces({MediaType.APPLICATION_JSON})
     public Response addAlbum(@FormDataParam("album") FormDataBodyPart albumJson,
@@ -66,10 +65,8 @@ public class Albums {
                 FormDataContentDisposition fd = coverFile.getFormDataContentDisposition();
                 String fileName = fd.getFileName();
                 MediaType md = coverFile.getMediaType();
-                System.out.println(fileName);
-                System.out.println(md.toString());
                 String fileLocation = BASE + "/" + fileName;
-                manager.updateAlbumCoverImage(is, fileLocation, album.getIsrc());
+                manager.updateAlbumCoverImage(is, fileLocation, album.getIsrc(), md);
             } else {
                 throw new RepException("Album already exists!");
             }
@@ -170,14 +167,23 @@ public class Albums {
     @Path("{isrc}")
     @Consumes({MediaType.MULTIPART_FORM_DATA})
     @Produces({MediaType.APPLICATION_JSON})
-    public Response updateAlbumCoverImage(@FormDataParam("file") InputStream fileInputStream,
-                                          @FormDataParam("file") FormDataContentDisposition cdh,
+    public Response updateAlbumCoverImage(@FormDataParam("file") FormDataBodyPart coverFile,
                                           @PathParam("isrc") String isrc) {
         try {
             if (!isManagerCreated)
                 initialize();
-            String fileLocation = BASE + "/" + cdh.getFileName();
-            manager.updateAlbumCoverImage(fileInputStream, fileLocation, isrc);
+            Album foundAlbum = manager.getAlbum(isrc);
+            if (foundAlbum == null) {
+                throw new RepException("Album not found!");
+            }
+            else {
+                InputStream is = coverFile.getEntityAs(InputStream.class);
+                FormDataContentDisposition fd = coverFile.getFormDataContentDisposition();
+                String fileName = fd.getFileName();
+                MediaType md = coverFile.getMediaType();
+                String fileLocation = BASE + "/" + fileName;
+                manager.updateAlbumCoverImage(is, fileLocation, isrc, md);
+            }
             return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).build();
         }
         catch (Exception e) {
@@ -192,7 +198,6 @@ public class Albums {
         try {
             if (!isManagerCreated)
                 initialize();
-
             Album existingAlbum = manager.getAlbum(isrc);
             if (existingAlbum == null) {
                 throw new RepException("Album not found!");
@@ -208,7 +213,7 @@ public class Albums {
 
     @GET
     @Path("/cover/{isrc}")
-    @Produces({MediaType.APPLICATION_JSON})
+    @Produces("image/jpeg")
     public Response getAlbumCoverImage(@PathParam("isrc") String isrc) {
         try {
             if (!isManagerCreated)
@@ -229,7 +234,6 @@ public class Albums {
                     {
                         throw new RepException("File Not Found !!");
                     }
-
                 }
             };
             return Response

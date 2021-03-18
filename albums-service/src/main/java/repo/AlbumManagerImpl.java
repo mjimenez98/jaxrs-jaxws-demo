@@ -82,7 +82,8 @@ public class AlbumManagerImpl implements AlbumManager {
 
 
     //Update Album Cover Image
-    public void updateAlbumCoverImage(InputStream newCover, String location, String isrc){
+    @Override
+    public void updateAlbumCoverImage(InputStream newCover, String location, String isrc, MediaType md){
         try {
             int read = 0;
             byte[] bytes = new byte[1024];
@@ -94,7 +95,7 @@ public class AlbumManagerImpl implements AlbumManager {
             out.close();
             Album album = getAlbum(isrc);
             if (album != null) {
-                album.setCover(new Cover(location, null));
+                album.setCover(new Cover(location, md));
                 logs.add(new LogEntry(new Date(), ChangeType.UPDATE, isrc));
             }
         }
@@ -103,12 +104,14 @@ public class AlbumManagerImpl implements AlbumManager {
         }
     }
 
-    @Override
+
     //Delete Album Cover Image
+    @Override
     public void deleteAlbumCoverImage(String isrc){
         try {
             Album album = getAlbum(isrc);
-            album.setCover(null);
+            System.out.println(album.toString());
+            album.setCover(new Cover("", null));
             logs.add(new LogEntry(new Date(), ChangeType.UPDATE, isrc));
         }
         catch(Exception e){
@@ -116,8 +119,9 @@ public class AlbumManagerImpl implements AlbumManager {
         }
     }
 
-    @Override
+
     //Get Album Cover Image
+    @Override
     public Cover getAlbumCoverImage(String isrc) {
         try {
             Album album = getAlbum(isrc);
