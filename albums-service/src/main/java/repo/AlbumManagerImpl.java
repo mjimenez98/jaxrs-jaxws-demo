@@ -18,13 +18,11 @@ import java.util.stream.Stream;
 public class AlbumManagerImpl implements AlbumManager {
 
     AlbumGateway ag = new AlbumGateway();
-    //private ArrayList<Album> albums = new ArrayList<>();
 
     //Create Album
     public void createAlbum(Album newAlbum) {
         try {
             ag.createAlbum(newAlbum);
-           // albums.add(newAlbum);
             logs.add(new LogEntry(new Date(), ChangeType.CREATE, newAlbum.getIsrc()));
         }
         catch(Exception e) {
@@ -36,8 +34,6 @@ public class AlbumManagerImpl implements AlbumManager {
     @Override
     public void updateAlbum(Album album) {
         try {
-            //deleteAlbum(album.getIsrc());
-            //createAlbum(album);
             ag.updateAlbum(album);
             logs.add(new LogEntry(new Date(), ChangeType.UPDATE, album.getIsrc()));
         }
@@ -50,12 +46,6 @@ public class AlbumManagerImpl implements AlbumManager {
     @Override
     public void deleteAlbum(String isrc) {
         try {
-            /*
-            albums = albums.stream()
-                    .filter(album -> !album.getIsrc().equals(isrc))
-                    .collect(Collectors.toCollection(ArrayList::new));
-            logs.add(new LogEntry(new Date(), ChangeType.DELETE, isrc));
-            */
             ag.deleteAlbum(isrc);
         }
         catch(Exception e) {
@@ -67,11 +57,6 @@ public class AlbumManagerImpl implements AlbumManager {
     @Override
     public Album getAlbum(String isrc) {
         try {
-            /*
-            Album album = albums.stream()
-                    .filter(album1 -> album1.getIsrc().equals(isrc))
-                    .findAny().orElse(null);
-             */
             return  ag.getAlbumInfo(isrc);
         }
         catch(Exception e){
@@ -90,16 +75,6 @@ public class AlbumManagerImpl implements AlbumManager {
     @Override
     public void updateAlbumCoverImage(InputStream newCover, String isrc, MediaType md){
         try {
-            /*
-            int read = 0;
-            byte[] bytes = new byte[1024];
-            FileOutputStream out = new FileOutputStream(location);
-            while((read = newCover.read(bytes)) != -1){
-                out.write(bytes, 0, read);
-            }
-            out.flush();
-            out.close();
-            */
             Album album = getAlbum(isrc);
             if (album != null) {
                 ag.updateAlbumCover(isrc, new Cover(newCover, md.toString()));
@@ -117,11 +92,6 @@ public class AlbumManagerImpl implements AlbumManager {
     @Override
     public void deleteAlbumCoverImage(String isrc){
         try {
-            /*
-            Album album = getAlbum(isrc);
-            System.out.println(album.toString());
-            album.setCover(new Cover("", null));
-            */
             ag.deleteAlbumCover(isrc);
             logs.add(new LogEntry(new Date(), ChangeType.UPDATE, isrc));
         }
@@ -135,14 +105,6 @@ public class AlbumManagerImpl implements AlbumManager {
     @Override
     public Cover getAlbumCoverImage(String isrc) {
         try {
-            /*
-            Album album = getAlbum(isrc);
-            if (album != null) {
-                Cover cover = album.getCover();
-                return cover;
-            }
-            return null;
-            */
             return ag.getAlbumCover(isrc);
         }
         catch(Exception e){

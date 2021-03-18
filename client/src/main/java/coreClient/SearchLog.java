@@ -5,8 +5,6 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 public class SearchLog {
-    private static String xmlGregorianCalendarConversionSuffix = ":00.100-04:00";
-
     private String from;
     private String to;
     private ChangeType type;
@@ -68,6 +66,7 @@ public class SearchLog {
             return null;
 
         try {
+            String xmlGregorianCalendarConversionSuffix = ":00.100-04:00";
             String formattedDate = date + xmlGregorianCalendarConversionSuffix;
             DatatypeFactory factory = DatatypeFactory.newInstance();
 

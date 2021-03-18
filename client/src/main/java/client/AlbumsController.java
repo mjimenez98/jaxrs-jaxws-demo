@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import calls.RestCalls;
 
+import javax.ws.rs.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -19,7 +20,7 @@ public class AlbumsController {
 
     @GetMapping("/albums")
     public String getAlbums(@ModelAttribute Search search, Model model) {
-        List<Album> albums = RestCalls.GetAlbums();
+        List<Album> albums = RestCalls.ListAlbums();
 
         // Apply filter
         if (search.getText() != null) {
@@ -46,6 +47,10 @@ public class AlbumsController {
     @GetMapping("/albums/{isrc}")
     public String getAlbum(@PathVariable("isrc") String isrc, Model model) {
         Album album = RestCalls.GetAlbum(isrc);
+
+//        TO BE ADDED
+//        album.setCover(RestCalls.GetAlbumCover());
+
         model.addAttribute("album", album);
 
         return "show";
@@ -62,7 +67,6 @@ public class AlbumsController {
 
     @PostMapping("/albums/new")
     public String newAlbumSubmit(@ModelAttribute Album album, Model model) {
-        album.setCover(new Cover(null, null));
         RestCalls.CreateAlbum(album);
 
         return "redirect:/albums";
@@ -86,11 +90,25 @@ public class AlbumsController {
         return "redirect:/albums";
     }
 
+    @PostMapping("/albums/edit/cover/{isrc}")
+    public String editAlbumCoverSubmit(@ModelAttribute Album album, Model model) {
+        RestCalls.EditAlbumCover(album);
+
+        return "redirect:/albums";
+    }
+
 //    DELETE
 
     @GetMapping("/albums/delete/{isrc}")
     public String deleteAlbum(@PathVariable("isrc") String isrc, Model model) {
         RestCalls.DeleteAlbum(isrc);
+
+        return "redirect:/albums";
+    }
+
+    @GetMapping("albums/delete/cover/{isrc}")
+    public String deleteAlbumCover(@PathVariable("isrc") String isrc, Model model) {
+        RestCalls.DeleteAlbumCover(isrc);
 
         return "redirect:/albums";
     }

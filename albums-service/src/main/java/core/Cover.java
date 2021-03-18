@@ -16,7 +16,7 @@ public class Cover {
     }
 
     public Cover(InputStream blob, String mimeType) {
-        this.blob = blob;;
+        this.blob = blob;
         this.mimeType = mimeType;
     }
 

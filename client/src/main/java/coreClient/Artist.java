@@ -1,8 +1,6 @@
 package coreClient;
 
-import java.io.Serializable;
-
-public class Artist implements Serializable {
+public class Artist {
     private String firstName;
     private String lastName;
 

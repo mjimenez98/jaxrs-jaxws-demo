@@ -1,4 +1,3 @@
-//Sources: https://stackoverflow.com/questions/44520887/how-to-download-a-csv-file-by-streamingoutput
 package service;
 
 import core.Cover;
@@ -10,9 +9,7 @@ import repo.AlbumManagerSingleton;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Comparator;
 
 /**
