@@ -1,45 +1,47 @@
 package core;
 
-import javax.ws.rs.FormParam;
-import javax.ws.rs.core.MediaType;
-import java.awt.image.BufferedImage;
-import java.io.InputStream;
-import java.io.Serializable;
+import java.sql.Blob;
 
-public class Cover implements Serializable {
+public class Cover {
 
-    private String image;
-    private MediaType mimeType;
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public MediaType getMimeType() {
-        return mimeType;
-    }
-
-    public void setMimeType(MediaType mimeType) {
-        this.mimeType = mimeType;
-    }
+    private Blob blob;
+    private String mimeType;
 
     public Cover() {
         // Could be changed to a default image
-        this.image = null;
+        this.blob = null;
         this.mimeType = null;
     }
 
-    public Cover(String image, MediaType mimeType) {
-        this.image = image;
+    public Cover(Blob blob) {
+        // basic file constructor
+        this.blob = blob;
+    }
+
+    public Cover(Blob blob, String mimeType) {
+        this.blob = blob;;
         this.mimeType = mimeType;
     }
 
     public Cover(Cover cover) {
-        this.image = cover.image;
+        this.blob = cover.blob;
         this.mimeType = cover.mimeType;
     }
+
+
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
+    public Blob getBlob() {
+        return blob;
+    }
+    public void setBlob(Blob blob) {
+        this.blob = blob;
+    }
+
 }
