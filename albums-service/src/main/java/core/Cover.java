@@ -1,20 +1,17 @@
 package core;
 
 import java.io.InputStream;
-import java.sql.Blob;
 
 public class Cover {
     private InputStream blob;
     private String mimeType;
 
     public Cover() {
-        // Could be changed to a default image
         this.blob = null;
         this.mimeType = null;
     }
 
     public Cover(InputStream blob) {
-        // basic file constructor
         this.blob = blob;
     }
 

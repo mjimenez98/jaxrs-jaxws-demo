@@ -22,8 +22,6 @@ import java.util.Comparator;
 public class Albums {
     private static AlbumManagerImpl manager;
     private static boolean isManagerCreated = false;
-    //private static String BASE = "/Users/dina/Documents/GitHub/jaxrs-jaxws-demo/albums-service/src/covers";
-    //private static final String COVERS_PATH = "/covers";
 
     private void initialize() throws Exception {
         if (isManagerCreated)
@@ -35,6 +33,8 @@ public class Albums {
         manager = managerSingleton.getAlbumManagerImplementation();
     }
 
+//    ALBUM
+
     @POST
     @Consumes({MediaType.MULTIPART_FORM_DATA})
     @Produces({MediaType.APPLICATION_JSON})
@@ -44,6 +44,7 @@ public class Albums {
             if (!isManagerCreated)
                 initialize();
 
+            // Parse album
             albumJson.setMediaType(MediaType.APPLICATION_JSON_TYPE);
             Album album = albumJson.getValueAs(Album.class);
 
@@ -54,20 +55,18 @@ public class Albums {
 
             Album existingAlbum = manager.getAlbum(album.getIsrc());
             if (existingAlbum == null) {
+                // Create album
                 Album newAlbum = new Album(album);
                 manager.createAlbum(newAlbum);
 
+                // Add album cover
                 InputStream is = coverFile.getEntityAs(InputStream.class);
-
-                FormDataContentDisposition fd = coverFile.getFormDataContentDisposition();
-                //String fileName = fd.getFileName();
-
                 MediaType md = coverFile.getMediaType();
-                //String fileLocation = BASE + "/" + fileName;
                 manager.updateAlbumCoverImage(is, album.getIsrc(), md);
             } else {
                 throw new RepException("Album already exists!");
             }
+
             return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).build();
         }
         catch (Exception e) {
@@ -84,8 +83,10 @@ public class Albums {
                 initialize();
 
             if (album.getIsrc() == null || album.getTitle() == null || album.getReleaseYear() == 0 ||
-                    album.getArtist() == null)
+                    album.getArtist() == null) {
                 throw new RepException("Request could not be processed: Parameter missing");
+            }
+
             Album existingAlbum = manager.getAlbum(album.getIsrc());
             if (existingAlbum == null) {
                 throw new RepException("Album not found!");
@@ -93,6 +94,7 @@ public class Albums {
                 Album newAlbum = new Album(album);
                 manager.updateAlbum(newAlbum);
             }
+
             return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).build();
         }
         catch (Exception e) {
@@ -114,6 +116,7 @@ public class Albums {
             } else {
                 manager.deleteAlbum(isrc);
             }
+
             return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).build();
         }
         catch (Exception e) {
@@ -142,10 +145,6 @@ public class Albums {
         }
     }
 
-    /**
-     * List all albums alphabetically by title
-     * @return Collection of ISRCs and titles
-     */
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public Response listAlbums() {
@@ -154,12 +153,15 @@ public class Albums {
                 initialize();
 
             Album[] albums = manager.getAlbums().stream().sorted(Comparator.comparing(Album::getTitle)).toArray(Album[]::new);
+
             return Response.status(Response.Status.OK).entity(albums).type(MediaType.APPLICATION_JSON).build();
         }
         catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).type(MediaType.APPLICATION_JSON).build();
         }
     }
+
+//    ALBUM COVER
 
     @PUT
     @Path("{isrc}")
@@ -170,18 +172,18 @@ public class Albums {
         try {
             if (!isManagerCreated)
                 initialize();
+
             Album foundAlbum = manager.getAlbum(isrc);
             if (foundAlbum == null) {
                 throw new RepException("Album not found!");
             }
             else {
                 InputStream is = coverFile.getEntityAs(InputStream.class);
-                FormDataContentDisposition fd = coverFile.getFormDataContentDisposition();
-                //String fileName = fd.getFileName();
                 MediaType md = coverFile.getMediaType();
-                //String fileLocation = BASE + "/" + fileName;
+
                 manager.updateAlbumCoverImage(is, isrc, md);
             }
+
             return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).build();
         }
         catch (Exception e) {
@@ -196,12 +198,14 @@ public class Albums {
         try {
             if (!isManagerCreated)
                 initialize();
+
             Album existingAlbum = manager.getAlbum(isrc);
             if (existingAlbum == null) {
                 throw new RepException("Album not found!");
             } else {
                 manager.deleteAlbumCoverImage(isrc);
             }
+
             return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).build();
         }
         catch (Exception e) {
@@ -216,32 +220,34 @@ public class Albums {
         try {
             if (!isManagerCreated)
                 initialize();
+
             Cover cover = manager.getAlbumCoverImage(isrc);
-            StreamingOutput fileStream = new StreamingOutput() {
-                @Override
-                public void write(OutputStream output) throws IOException, WebApplicationException {
-                    try
-                    {
-                        //java.nio.file.Path path = Paths.get(cover.getImage());
-                        //byte[] data = Files.readAllBytes(path);
-                        //output.write(data);
-                        //output.flush();
-                        InputStream is = cover.getBlob();
-                        byte[] bytes = new byte[1024];
-                        int bytesRead;
-                        while ((bytesRead = is.read(bytes)) != -1) {
-                            output.write(bytes, 0, bytesRead);
-                        }
-                        is.close();
-                        output.flush();
-                        output.close();
+
+            if (cover == null)
+                return Response.status(Response.Status.OK)
+                        .entity("Album cover not found!")
+                        .type(MediaType.APPLICATION_JSON)
+                        .build();
+
+            StreamingOutput fileStream = output -> {
+                try {
+                    InputStream is = cover.getBlob();
+                    byte[] bytes = new byte[1024];
+                    int bytesRead;
+
+                    while ((bytesRead = is.read(bytes)) != -1) {
+                        output.write(bytes, 0, bytesRead);
                     }
-                    catch (Exception e)
-                    {
-                        throw new RepException("File Not Found !!");
-                    }
+
+                    is.close();
+                    output.flush();
+                    output.close();
+                }
+                catch (Exception e) {
+                    throw new RepException("File Not Found !!");
                 }
             };
+
             return Response
                     .ok(fileStream, cover.getMimeType())
                     .header("content-disposition","inline")

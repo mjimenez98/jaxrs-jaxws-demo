@@ -5,7 +5,7 @@ public class DBConnect {
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     static final String DBURL = "jdbc:mysql://localhost:3306/AlbumsDB"; //Ensure schema is called AlbumsDB
     static final String DBUSER = "root";
-    static final String DBPASS = "123";
+    static final String DBPASS = "123456789";
     static Connection connect = null;
 
     public static Connection connect() {
