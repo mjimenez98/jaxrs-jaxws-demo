@@ -5,6 +5,7 @@ import core.Album;
 import core.ChangeType;
 import core.Cover;
 import core.LogEntry;
+import db.AlbumGateway;
 import exceptions.RepException;
 
 import javax.ws.rs.PUT;
@@ -20,12 +21,14 @@ import java.util.stream.Stream;
 
 public class AlbumManagerImpl implements AlbumManager {
 
-    private ArrayList<Album> albums = new ArrayList<>();
+    AlbumGateway ag = new AlbumGateway();
+    //private ArrayList<Album> albums = new ArrayList<>();
 
     //Create Album
     public void createAlbum(Album newAlbum) {
         try {
-            albums.add(newAlbum);
+            ag.createAlbum(newAlbum);
+           // albums.add(newAlbum);
             logs.add(new LogEntry(new Date(), ChangeType.CREATE, newAlbum.getIsrc()));
         }
         catch(Exception e) {
@@ -37,8 +40,9 @@ public class AlbumManagerImpl implements AlbumManager {
     @Override
     public void updateAlbum(Album album) {
         try {
-            deleteAlbum(album.getIsrc());
-            createAlbum(album);
+            //deleteAlbum(album.getIsrc());
+            //createAlbum(album);
+            ag.updateAlbum(album);
             logs.add(new LogEntry(new Date(), ChangeType.UPDATE, album.getIsrc()));
         }
         catch(Exception e) {
@@ -50,10 +54,13 @@ public class AlbumManagerImpl implements AlbumManager {
     @Override
     public void deleteAlbum(String isrc) {
         try {
+            /*
             albums = albums.stream()
                     .filter(album -> !album.getIsrc().equals(isrc))
                     .collect(Collectors.toCollection(ArrayList::new));
             logs.add(new LogEntry(new Date(), ChangeType.DELETE, isrc));
+            */
+            ag.deleteAlbum(isrc);
         }
         catch(Exception e) {
             throw new RepException(e.getMessage());
@@ -64,10 +71,12 @@ public class AlbumManagerImpl implements AlbumManager {
     @Override
     public Album getAlbum(String isrc) {
         try {
+            /*
             Album album = albums.stream()
                     .filter(album1 -> album1.getIsrc().equals(isrc))
                     .findAny().orElse(null);
-            return album;
+             */
+            return  ag.getAlbumInfo(isrc);
         }
         catch(Exception e){
             throw new RepException(e.getMessage());
@@ -77,14 +86,15 @@ public class AlbumManagerImpl implements AlbumManager {
     //Get Album List
     @Override
     public ArrayList<Album> getAlbums() {
-        return albums;
+        return ag.getAlbumsList();
     }
 
 
     //Update Album Cover Image
     @Override
-    public void updateAlbumCoverImage(InputStream newCover, String location, String isrc, MediaType md){
+    public void updateAlbumCoverImage(InputStream newCover, String isrc, MediaType md){
         try {
+            /*
             int read = 0;
             byte[] bytes = new byte[1024];
             FileOutputStream out = new FileOutputStream(location);
@@ -93,9 +103,11 @@ public class AlbumManagerImpl implements AlbumManager {
             }
             out.flush();
             out.close();
+            */
             Album album = getAlbum(isrc);
             if (album != null) {
-                album.setCover(new Cover(location, md));
+                ag.updateAlbumCover(isrc, new Cover(newCover, md.toString()));
+                //album.setCover(new Cover(newCover, md.toString()));
                 logs.add(new LogEntry(new Date(), ChangeType.UPDATE, isrc));
             }
         }
@@ -109,9 +121,12 @@ public class AlbumManagerImpl implements AlbumManager {
     @Override
     public void deleteAlbumCoverImage(String isrc){
         try {
+            /*
             Album album = getAlbum(isrc);
             System.out.println(album.toString());
             album.setCover(new Cover("", null));
+            */
+            ag.deleteAlbumCover(isrc);
             logs.add(new LogEntry(new Date(), ChangeType.UPDATE, isrc));
         }
         catch(Exception e){
@@ -124,12 +139,15 @@ public class AlbumManagerImpl implements AlbumManager {
     @Override
     public Cover getAlbumCoverImage(String isrc) {
         try {
+            /*
             Album album = getAlbum(isrc);
             if (album != null) {
                 Cover cover = album.getCover();
                 return cover;
             }
             return null;
+            */
+            return ag.getAlbumCover(isrc);
         }
         catch(Exception e){
             throw new RepException(e.getMessage());

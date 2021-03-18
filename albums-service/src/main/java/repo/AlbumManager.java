@@ -18,8 +18,7 @@ public interface AlbumManager {
     public ArrayList<Album> getAlbums();
 
     //Update Album Cover Image
-    void updateAlbumCoverImage(InputStream newCover, String location, String isrc, MediaType md);
-
+    public void updateAlbumCoverImage(InputStream newCover, String isrc, MediaType md);
     public void deleteAlbumCoverImage(String isrc);
     public Cover getAlbumCoverImage(String isrc);
     public ArrayList<LogEntry> getChangeLogs(Date from, Date to, ChangeType changeType);

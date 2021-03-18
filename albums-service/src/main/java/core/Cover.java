@@ -1,10 +1,11 @@
 package core;
 
+import java.io.InputStream;
 import java.sql.Blob;
 
 public class Cover {
 
-    private Blob blob;
+    private InputStream blob;
     private String mimeType;
 
     public Cover() {
@@ -13,12 +14,12 @@ public class Cover {
         this.mimeType = null;
     }
 
-    public Cover(Blob blob) {
+    public Cover(InputStream blob) {
         // basic file constructor
         this.blob = blob;
     }
 
-    public Cover(Blob blob, String mimeType) {
+    public Cover(InputStream blob, String mimeType) {
         this.blob = blob;;
         this.mimeType = mimeType;
     }
@@ -37,10 +38,10 @@ public class Cover {
         this.mimeType = mimeType;
     }
 
-    public Blob getBlob() {
+    public InputStream getBlob() {
         return blob;
     }
-    public void setBlob(Blob blob) {
+    public void setBlob(InputStream blob) {
         this.blob = blob;
     }
 

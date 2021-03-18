@@ -10,8 +10,10 @@ import java.util.ArrayList;
 public class AlbumGateway {
     static Connection connect = null;
 
+    /*
     static public String extractMimeType(String pathname) {
 
+        /*
         switch (pathname.substring(pathname.lastIndexOf(".") + 1)) {
             case "png":
                 return "image/png";
@@ -21,26 +23,28 @@ public class AlbumGateway {
                 return null;
         }
     }
-    public void createAlbum(String isrc, String title, String description, int releaseYear, Artist artist){
+    */
+
+    public void createAlbum(Album album){
         connect = DBConnect.connect();
         try{
-            String findStr = "SELECT * FROM Albums WHERE isrc=" + isrc;
+            String findStr = "SELECT * FROM Albums WHERE isrc=" + album.getIsrc();
             Statement checkStatement = connect.createStatement();
             ResultSet checkTable = checkStatement.executeQuery(findStr);
             if(!checkTable.next()) {
                 String insertStr = "INSERT INTO Albums (isrc, title, description, year, firstname, lastname) VALUES(?,?,?,?,?,?)";
                 PreparedStatement insertStatement = connect.prepareStatement(insertStr);
-                insertStatement.setString(1, isrc);
-                insertStatement.setString(2, title);
-                insertStatement.setString(3, description);
-                insertStatement.setInt(4, releaseYear);
-                insertStatement.setString(5, artist.getFirstName());
-                insertStatement.setString(6, artist.getLastName());
+                insertStatement.setString(1, album.getIsrc());
+                insertStatement.setString(2, album.getTitle());
+                insertStatement.setString(3, album.getDescription());
+                insertStatement.setInt(4, album.getReleaseYear());
+                insertStatement.setString(5, album.getArtist().getFirstName());
+                insertStatement.setString(6, album.getArtist().getLastName());
                 insertStatement.executeUpdate();
                 System.out.println(insertStr);
             }
             else{
-                System.out.println("Album with isrc: " + isrc + ", already exists.");
+                System.out.println("Album with isrc: " + album.getIsrc() + ", already exists.");
             }
         }
         catch (Exception e){
@@ -55,7 +59,9 @@ public class AlbumGateway {
             }
         }
     }
-    public void createAlbumWithCover(String isrc, String title, String description, int releaseYear, Artist artist, String pathname){
+
+    /*
+    public void createAlbumWithCover(String isrc, String title, String description, int releaseYear, Artist artist, Cover cover){
         connect = DBConnect.connect();
 
         try{
@@ -64,9 +70,10 @@ public class AlbumGateway {
             ResultSet checkTable = checkStatement.executeQuery(findStr);
             if(!checkTable.next()) {
                 String insertStr = "INSERT INTO Albums (isrc, title, description, year, firstname, lastname, coverart, mimetype) VALUES(?,?,?,?,?,?,?,?)";
-                File artFile = new File(pathname);
-                String mimeType = extractMimeType(pathname);
-                FileInputStream fileIn = new FileInputStream(artFile);
+                //File artFile = new File(pathname);
+                //String mimeType = cover.getMimeType();
+                //String mimeType = extractMimeType(pathname);
+                //FileInputStream fileIn = new FileInputStream(artFile);
                 PreparedStatement insertStatement = connect.prepareStatement(insertStr);
                 insertStatement.setString(1, isrc);
                 insertStatement.setString(2, title);
@@ -74,8 +81,8 @@ public class AlbumGateway {
                 insertStatement.setInt(4, releaseYear);
                 insertStatement.setString(5, artist.getFirstName());
                 insertStatement.setString(6, artist.getLastName());
-                insertStatement.setBinaryStream(7, fileIn);
-                insertStatement.setString(8, mimeType);
+                insertStatement.setBlob(7, cover.getBlob());
+                insertStatement.setString(8, cover.getMimeType());
                 insertStatement.executeUpdate();
             }
             else{
@@ -94,28 +101,30 @@ public class AlbumGateway {
             }
         }
     }
-    public void updateAlbum(String isrc, String title, String description, int releaseYear, Artist artist){
+    */
+
+    public void updateAlbum(Album album){
         connect = DBConnect.connect();
         try{
-            String findStr = "SELECT * FROM Albums WHERE isrc=" + isrc;
-            Statement checkStatement = connect.createStatement();
-            ResultSet checkTable = checkStatement.executeQuery(findStr);
-            if(checkTable.next()) {
+            //String findStr = "SELECT * FROM Albums WHERE isrc=" + album.getIsrc();
+            //Statement checkStatement = connect.createStatement();
+            //ResultSet checkTable = checkStatement.executeQuery(findStr);
+            //if(checkTable.next()) {
                 String updateStr = "UPDATE Albums SET isrc=?, title=?, description=?, year=?, firstname=?, lastname=? WHERE isrc=?;";
                 PreparedStatement updateStatement = connect.prepareStatement(updateStr);
-                updateStatement.setString(1, isrc);
-                updateStatement.setString(2, title);
-                updateStatement.setString(3, description);
-                updateStatement.setInt(4, releaseYear);
-                updateStatement.setString(5, artist.getFirstName());
-                updateStatement.setString(6, artist.getLastName());
-                updateStatement.setString(7, isrc);
+                updateStatement.setString(1, album.getIsrc());
+                updateStatement.setString(2, album.getTitle());
+                updateStatement.setString(3, album.getDescription());
+                updateStatement.setInt(4, album.getReleaseYear());
+                updateStatement.setString(5, album.getArtist().getFirstName());
+                updateStatement.setString(6, album.getArtist().getLastName());
+                updateStatement.setString(7, album.getIsrc());
                 updateStatement.executeUpdate();
                 System.out.println(updateStr);
-            }
-            else{
-                System.out.println("Album with isrc: " + isrc + ", does not exist.");
-            }
+            //}
+            //else{
+              //  System.out.println("Album with isrc: " + isrc + ", does not exist.");
+            //}
         }
         catch (Exception e){
             e.printStackTrace();
@@ -191,6 +200,7 @@ public class AlbumGateway {
         }
         return null;
     }
+
     public ArrayList <Album> getAlbumsList(){
         connect = DBConnect.connect();
         ArrayList<Album> albums = new ArrayList<>();
@@ -225,7 +235,8 @@ public class AlbumGateway {
         }
         return null;
     }
-    public void updateAlbumCover(String isrc, String pathname){
+
+    public void updateAlbumCover(String isrc, Cover cover){
         connect = DBConnect.connect();
         try{
             String findStr = "SELECT * FROM Albums WHERE isrc=" + isrc;
@@ -233,12 +244,13 @@ public class AlbumGateway {
             ResultSet checkTable = checkStatement.executeQuery(findStr);
             if(checkTable.next()) {
                 String updateStr = "UPDATE Albums SET coverart=?, mimetype=? WHERE isrc=?;";
-                File artFile = new File(pathname);
-                String mimeType = extractMimeType(pathname);
-                FileInputStream fileIn = new FileInputStream(artFile);
+                //File artFile = new File(pathname);
+                //String mimeType = extractMimeType(pathname);
+                //FileInputStream fileIn = new FileInputStream(artFile);
                 PreparedStatement updateStatement = connect.prepareStatement(updateStr);
-                updateStatement.setBinaryStream(1, fileIn);
-                updateStatement.setString(2, mimeType);
+                //updateStatement.setBinaryStream(1, fileIn);
+                updateStatement.setBlob(1, cover.getBlob());
+                updateStatement.setString(2, cover.getMimeType());
                 updateStatement.setString(3, isrc);
                 updateStatement.executeUpdate();
             }
@@ -304,7 +316,7 @@ public class AlbumGateway {
                 if (table.next()) {
                     Blob blob = table.getBlob("coverart");
                     String mimeType = table.getString("mimetype");
-                    Cover cover = new Cover(blob, mimeType);
+                    Cover cover = new Cover(blob.getBinaryStream(), mimeType);
                     return cover;
                 }
             }

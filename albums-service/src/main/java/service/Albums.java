@@ -19,6 +19,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.stream.Collectors;
@@ -66,7 +68,7 @@ public class Albums {
                 String fileName = fd.getFileName();
                 MediaType md = coverFile.getMediaType();
                 String fileLocation = BASE + "/" + fileName;
-                manager.updateAlbumCoverImage(is, fileLocation, album.getIsrc(), md);
+                manager.updateAlbumCoverImage(is, album.getIsrc(), md);
             } else {
                 throw new RepException("Album already exists!");
             }
@@ -179,10 +181,10 @@ public class Albums {
             else {
                 InputStream is = coverFile.getEntityAs(InputStream.class);
                 FormDataContentDisposition fd = coverFile.getFormDataContentDisposition();
-                String fileName = fd.getFileName();
+                //String fileName = fd.getFileName();
                 MediaType md = coverFile.getMediaType();
-                String fileLocation = BASE + "/" + fileName;
-                manager.updateAlbumCoverImage(is, fileLocation, isrc, md);
+                //String fileLocation = BASE + "/" + fileName;
+                manager.updateAlbumCoverImage(is, isrc, md);
             }
             return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).build();
         }
@@ -218,17 +220,25 @@ public class Albums {
         try {
             if (!isManagerCreated)
                 initialize();
-
             Cover cover = manager.getAlbumCoverImage(isrc);
             StreamingOutput fileStream = new StreamingOutput() {
                 @Override
                 public void write(OutputStream output) throws IOException, WebApplicationException {
                     try
                     {
-                        java.nio.file.Path path = Paths.get(cover.getImage());
-                        byte[] data = Files.readAllBytes(path);
-                        output.write(data);
+                        //java.nio.file.Path path = Paths.get(cover.getImage());
+                        //byte[] data = Files.readAllBytes(path);
+                        //output.write(data);
+                        //output.flush();
+                        InputStream is = cover.getBlob();
+                        byte[] bytes = new byte[1024];
+                        int bytesRead;
+                        while ((bytesRead = is.read(bytes)) != -1) {
+                            output.write(bytes, 0, bytesRead);
+                        }
+                        is.close();
                         output.flush();
+                        output.close();
                     }
                     catch (Exception e)
                     {
@@ -238,7 +248,7 @@ public class Albums {
             };
             return Response
                     .ok(fileStream, cover.getMimeType())
-                    .header("content-disposition","attachment; filename = " + cover.getImage().split(isrc+"/")[1])
+                    .header("content-disposition","inline")
                     .build();
         }
         catch (Exception e) {
