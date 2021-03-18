@@ -2,6 +2,7 @@ package service;
 
 import core.ChangeType;
 import core.LogEntry;
+import db.LogGateway;
 import exceptions.RepException;
 import repo.AlbumManagerImpl;
 import repo.AlbumManagerSingleton;
@@ -34,11 +35,7 @@ public class LogEntriesImpl implements LogEntries {
             if (!isManagerCreated)
                 initialize();
 
-            // TO DELETE
-            manager.logs.add(new LogEntry(new Date(), ChangeType.CREATE, "1"));
-
             ArrayList<LogEntry> logs = manager.getChangeLogs(from, to, changeType);
-            logs = logs.stream().sorted(Comparator.comparing(LogEntry::getTimestamp)).collect(Collectors.toCollection(ArrayList::new));
 
             return logs.toArray(new LogEntry[0]);
         }

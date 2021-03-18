@@ -112,11 +112,11 @@ public class AlbumManagerImpl implements AlbumManager {
         }
     }
 
-    public ArrayList<LogEntry> logs = new ArrayList<>();
-
     @Override
     // If no parameters are given, all change logs are returned
-    public ArrayList<LogEntry> getChangeLogs(Date from, Date to, ChangeType changeType){
+    public ArrayList<LogEntry> getChangeLogs(Date from, Date to, ChangeType changeType) {
+        ArrayList<LogEntry> logs = LogGateway.getLogs();
+
         if (from == null && to == null && changeType == null)
             return logs;
 
