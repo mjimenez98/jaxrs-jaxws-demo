@@ -9,7 +9,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -44,8 +43,11 @@ public class RestCalls {
         try {
             MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
 
-            // Set file - DOES NOT WORK
-            formData.add("file", album.getCover().getBlobAsResource());
+            // Update cover
+            if (album.getCover().getBlob().getBytes().length > 0) {
+                // Set file - DOES NOT WORK
+                formData.add("file", album.getCover().getBlobAsResource());
+            }
 
             // Set album
             album.setCover(new Cover());
@@ -58,24 +60,36 @@ public class RestCalls {
                     .retrieve()
                     .bodyToMono(Void.class)
                     .block();
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public static void EditAlbum(Album album) {
-        MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
+        try {
+            MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
 
-        album.setCover(new Cover());
-        formData.add("album", album);
+            // Update cover
+            if (album.getCover().getBlob().getBytes().length > 0) {
+                // Set file - DOES NOT WORK
+                formData.add("file", album.getCover().getBlobAsResource());
+            }
 
-        webClient.put()
-                .uri("/albums")
-                .contentType(MediaType.MULTIPART_FORM_DATA)
-                .body(BodyInserters.fromMultipartData(formData))
-                .retrieve()
-                .bodyToMono(Void.class)
-                .block();
+            album.setCover(new Cover());
+            formData.add("album", album);
+
+            webClient.put()
+                    .uri("/albums")
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .body(BodyInserters.fromMultipartData(formData))
+                    .retrieve()
+                    .bodyToMono(Void.class)
+                    .block();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public static void DeleteAlbum(String isrc) {
@@ -88,12 +102,12 @@ public class RestCalls {
 
 //    ALBUM COVER
 
-    public static void GetAlbumCover() {
-        // TO BE ADDED
-    }
-
-    public static void EditAlbumCover(Album album) {
-        // TO BE ADDED
+    public static byte[] GetAlbumCover(String isrc) {
+        return webClient.get()
+                .uri("/albums/cover/" + isrc)
+                .retrieve()
+                .bodyToMono(byte[].class)
+                .block();
     }
 
     public static void DeleteAlbumCover(String isrc) {

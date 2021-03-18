@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import calls.RestCalls;
 
 import javax.ws.rs.Path;
+import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -48,9 +49,15 @@ public class AlbumsController {
     public String getAlbum(@PathVariable("isrc") String isrc, Model model) {
         Album album = RestCalls.GetAlbum(isrc);
 
-//        TO BE ADDED
-//        album.setCover(RestCalls.GetAlbumCover());
+        String encodedImage = null;
+        byte[] image = RestCalls.GetAlbumCover(isrc);
 
+        // If image received
+        if (image.length > 22) {
+            encodedImage = Base64.getEncoder().encodeToString(image);
+        }
+
+        model.addAttribute("image", encodedImage);
         model.addAttribute("album", album);
 
         return "show";
@@ -86,13 +93,6 @@ public class AlbumsController {
     public String editAlbumSubmit(@ModelAttribute Album album, Model model) {
         album.setCover(new Cover(null, null));
         RestCalls.EditAlbum(album);
-
-        return "redirect:/albums";
-    }
-
-    @PostMapping("/albums/edit/cover/{isrc}")
-    public String editAlbumCoverSubmit(@ModelAttribute Album album, Model model) {
-        RestCalls.EditAlbumCover(album);
 
         return "redirect:/albums";
     }
