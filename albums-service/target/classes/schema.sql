@@ -12,5 +12,12 @@ CREATE TABLE 'Albums' (
   'coverart' blob,
   'mimetype' varchar(45) DEFAULT NULL,
   PRIMARY KEY ('isrc')
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+);
+
+CREATE TABLE Logs (
+    log_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    isrc VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    change_type VARCHAR(255) NOT NULL
+);
 

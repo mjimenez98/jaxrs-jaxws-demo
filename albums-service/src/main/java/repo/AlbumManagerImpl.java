@@ -6,7 +6,9 @@ import core.ChangeType;
 import core.Cover;
 import core.LogEntry;
 import db.AlbumGateway;
+import db.LogGateway;
 import exceptions.RepException;
+import sun.rmi.runtime.Log;
 
 import javax.ws.rs.core.MediaType;
 import java.io.InputStream;
@@ -23,7 +25,7 @@ public class AlbumManagerImpl implements AlbumManager {
     public void createAlbum(Album newAlbum) {
         try {
             ag.createAlbum(newAlbum);
-            logs.add(new LogEntry(new Date(), ChangeType.CREATE, newAlbum.getIsrc()));
+            LogGateway.createLog(ChangeType.CREATE.toString(), newAlbum.getIsrc());
         }
         catch(Exception e) {
             throw new RepException(e.getMessage());
@@ -35,7 +37,7 @@ public class AlbumManagerImpl implements AlbumManager {
     public void updateAlbum(Album album) {
         try {
             ag.updateAlbum(album);
-            logs.add(new LogEntry(new Date(), ChangeType.UPDATE, album.getIsrc()));
+            LogGateway.createLog(ChangeType.UPDATE.toString(), album.getIsrc());
         }
         catch(Exception e) {
             throw new RepException(e.getMessage());
@@ -47,6 +49,7 @@ public class AlbumManagerImpl implements AlbumManager {
     public void deleteAlbum(String isrc) {
         try {
             ag.deleteAlbum(isrc);
+            LogGateway.createLog(ChangeType.DELETE.toString(), isrc);
         }
         catch(Exception e) {
             throw new RepException(e.getMessage());
@@ -70,7 +73,6 @@ public class AlbumManagerImpl implements AlbumManager {
         return ag.getAlbumsList();
     }
 
-
     //Update Album Cover Image
     @Override
     public void updateAlbumCoverImage(InputStream newCover, String isrc, MediaType md){
@@ -78,8 +80,7 @@ public class AlbumManagerImpl implements AlbumManager {
             Album album = getAlbum(isrc);
             if (album != null) {
                 ag.updateAlbumCover(isrc, new Cover(newCover, md.toString()));
-                //album.setCover(new Cover(newCover, md.toString()));
-                logs.add(new LogEntry(new Date(), ChangeType.UPDATE, isrc));
+                LogGateway.createLog(ChangeType.UPDATE.toString(), isrc);
             }
         }
         catch(Exception e){
@@ -87,13 +88,12 @@ public class AlbumManagerImpl implements AlbumManager {
         }
     }
 
-
     //Delete Album Cover Image
     @Override
     public void deleteAlbumCoverImage(String isrc){
         try {
             ag.deleteAlbumCover(isrc);
-            logs.add(new LogEntry(new Date(), ChangeType.UPDATE, isrc));
+            LogGateway.createLog(ChangeType.UPDATE.toString(), isrc);
         }
         catch(Exception e){
             throw new RepException(e.getMessage());
@@ -133,6 +133,7 @@ public class AlbumManagerImpl implements AlbumManager {
 
         return logsToKeepStream.collect(Collectors.toCollection(ArrayList::new));
     }
+
     @Override
     //currently not available, raises a RepException "the method is not yet supported"
     public void clearLogs() throws RepException {

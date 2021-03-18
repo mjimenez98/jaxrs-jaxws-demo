@@ -206,7 +206,7 @@ public class AlbumGateway {
             Statement checkStatement = connect.createStatement();
             ResultSet checkTable = checkStatement.executeQuery(findStr);
             if(checkTable.next()) {
-                String deleteStr = "UPDATE Albums SET coverart=?, mimetype=? WHERE isrc=?;";
+                String deleteStr = "UPDATE Albums SET coverart=?, mimetype=? WHERE isrc=?";
                 PreparedStatement deleteStatement = connect.prepareStatement(deleteStr);
                 deleteStatement.setNull(1, java.sql.Types.BLOB);
                 deleteStatement.setNull(2, Types.VARCHAR);
