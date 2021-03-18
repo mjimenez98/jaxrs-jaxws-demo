@@ -1,13 +1,16 @@
 package client;
 
+import calls.LogEntryClient;
+import calls.SoapConfiguration;
+import calls.wsdl.LogEntry;
 import coreClient.*;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import java.util.ArrayList;
-import java.util.Date;
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.List;
 
 @Controller
@@ -16,9 +19,15 @@ public class LogsController {
     public String getLogs(@ModelAttribute SearchLog log, Model model) {
         model.addAttribute("search", new SearchLog());
 
-        List<LogEntry> logs = new ArrayList<>();
-        logs.add(new LogEntry(new Date(), ChangeType.CREATE, "1"));
-        logs.add(new LogEntry(new Date(), ChangeType.DELETE, "2"));
+        // Convert params to appropriate data type
+        XMLGregorianCalendar from = SearchLog.convertDateToWsdl(log.getFrom());
+        XMLGregorianCalendar to = SearchLog.convertDateToWsdl(log.getTo());
+        calls.wsdl.ChangeType type = log.getWsdlType();
+
+        // Make SOAP call
+        AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext(SoapConfiguration.class);
+        LogEntryClient logEntryClient = annotationConfigApplicationContext.getBean(LogEntryClient.class);
+        List<LogEntry> logs = logEntryClient.getChangeLogs(from, to, type);
 
         model.addAttribute("logs", logs);
 

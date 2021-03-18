@@ -1,11 +1,12 @@
 package coreClient;
 
-public class Album {
+import java.io.Serializable;
+
+public class Album implements Serializable {
     private String description;
     private String isrc;
     private String title;
     private int releaseYear;
-
     private Artist artist;
     private Cover cover;
 

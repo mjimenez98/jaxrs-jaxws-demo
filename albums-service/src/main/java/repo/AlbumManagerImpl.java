@@ -26,9 +26,9 @@ public class AlbumManagerImpl implements AlbumManager {
     public void createAlbum(Album newAlbum) {
         try {
             albums.add(newAlbum);
-           logs.add(new LogEntry(new Date(), ChangeType.CREATE, newAlbum.getIsrc()));
+            logs.add(new LogEntry(new Date(), ChangeType.CREATE, newAlbum.getIsrc()));
         }
-        catch(Exception e){
+        catch(Exception e) {
             throw new RepException(e.getMessage());
         }
     }
@@ -41,7 +41,7 @@ public class AlbumManagerImpl implements AlbumManager {
             createAlbum(album);
             logs.add(new LogEntry(new Date(), ChangeType.UPDATE, album.getIsrc()));
         }
-        catch(Exception e){
+        catch(Exception e) {
             throw new RepException(e.getMessage());
         }
     }
@@ -55,7 +55,7 @@ public class AlbumManagerImpl implements AlbumManager {
                     .collect(Collectors.toCollection(ArrayList::new));
             logs.add(new LogEntry(new Date(), ChangeType.DELETE, isrc));
         }
-        catch(Exception e){
+        catch(Exception e) {
             throw new RepException(e.getMessage());
         }
     }
@@ -139,24 +139,27 @@ public class AlbumManagerImpl implements AlbumManager {
     public ArrayList<LogEntry> logs = new ArrayList<>();
 
     @Override
-    //If no parameters are given, all change logs are returned
+    // If no parameters are given, all change logs are returned
     public ArrayList<LogEntry> getChangeLogs(Date from, Date to, ChangeType changeType){
-        if(from == null && to == null && changeType == null) return logs;
+        if (from == null && to == null && changeType == null)
+            return logs;
+
         Stream<LogEntry> logsToKeepStream = logs.stream();
         if (changeType != null) {
-            logsToKeepStream = logs.stream().filter(log -> log.getType() == changeType);
+            logsToKeepStream = logsToKeepStream.filter(log -> log.getType() == changeType);
         }
-        if(from != null) {
-            logsToKeepStream = logs.stream().filter(log -> log.getTimestamp().after(from));
+        if (from != null) {
+            logsToKeepStream = logsToKeepStream.filter(log -> log.getTimestamp().after(from));
         }
-        if(to != null){
-            logsToKeepStream = logs.stream().filter(log -> log.getTimestamp().before(to));
+        if (to != null){
+            logsToKeepStream = logsToKeepStream.filter(log -> log.getTimestamp().before(to));
         }
+
         return logsToKeepStream.collect(Collectors.toCollection(ArrayList::new));
     }
     @Override
     //currently not available, raises a RepException "the method is not yet supported"
     public void clearLogs() throws RepException {
-        throw new RepException("The method is not yet supported") ;
+        throw new RepException("The method is not yet supported");
     }
 }
