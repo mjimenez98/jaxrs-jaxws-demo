@@ -2,8 +2,7 @@ package calls;
 
 import coreClient.Album;
 import coreClient.Cover;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -11,8 +10,6 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 
 public class RestCalls {
@@ -43,11 +40,17 @@ public class RestCalls {
         try {
             MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
 
-            // Update cover
-            if (album.getCover().getBlob().getBytes().length > 0) {
-                // Set file - DOES NOT WORK
-                formData.add("file", album.getCover().getBlobAsResource());
-            }
+            // Convert file to ByteArrayResource
+            String filename = album.getCover().getBlob().getOriginalFilename();
+            ByteArrayResource contentsAsResource = new ByteArrayResource(album.getCover().getBlob().getBytes()) {
+                @Override
+                public String getFilename() {
+                    return filename; // Filename has to be returned in order to be able to post.
+                }
+            };
+
+            // Set file
+            formData.add("file", contentsAsResource);
 
             // Set album
             album.setCover(new Cover());
@@ -60,7 +63,8 @@ public class RestCalls {
                     .retrieve()
                     .bodyToMono(Void.class)
                     .block();
-        } catch (IOException e) {
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -69,15 +73,21 @@ public class RestCalls {
         try {
             MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
 
-            // Update cover
-            if (album.getCover().getBlob().getBytes().length > 0) {
-                // Set file - DOES NOT WORK
-                formData.add("file", album.getCover().getBlobAsResource());
-            }
+            // Convert file to ByteArrayResource
+            String filename = album.getCover().getBlob().getOriginalFilename();
+            ByteArrayResource contentsAsResource = new ByteArrayResource(album.getCover().getBlob().getBytes()) {
+                @Override
+                public String getFilename() {
+                    return filename; // Filename has to be returned in order to be able to post.
+                }
+            };
 
+            // Set file
+            formData.add("file", contentsAsResource);
+
+            // Set album
             album.setCover(new Cover());
             formData.add("album", album);
-
             webClient.put()
                     .uri("/albums")
                     .contentType(MediaType.MULTIPART_FORM_DATA)
@@ -116,15 +126,5 @@ public class RestCalls {
                 .retrieve()
                 .bodyToMono(Void.class)
                 .block();
-    }
-
-//    HELPERS
-
-    // DOES NOT WORK
-    public static Resource getTestFile() throws IOException {
-        Path testFile = Files.createTempFile("test-file", ".txt");
-        Files.write(testFile, "Hello World !!, This is a test file.".getBytes());
-
-        return new FileSystemResource(testFile.toFile());
     }
 }

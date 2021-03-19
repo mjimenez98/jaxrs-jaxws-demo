@@ -1,12 +1,6 @@
 package coreClient;
 
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 public class Cover {
     private MultipartFile blob;
@@ -41,21 +35,6 @@ public class Cover {
 
     public MultipartFile getBlob() {
         return blob;
-    }
-
-    // DOES NOT WORK
-    public Resource getBlobAsResource() throws IOException {
-        InputStream initialStream = blob.getInputStream();
-        byte[] buffer = new byte[initialStream.available()];
-        initialStream.read(buffer);
-
-        File targetFile = new File("src/main/resources/" + blob.getOriginalFilename());
-
-        try (OutputStream outStream = new FileOutputStream(targetFile)) {
-            outStream.write(buffer);
-        }
-
-        return new FileSystemResource(targetFile);
     }
 
     public void setBlob(MultipartFile blob) {
