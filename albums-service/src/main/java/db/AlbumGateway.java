@@ -1,6 +1,7 @@
 package db;
 
 import core.*;
+import exceptions.RepException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class AlbumGateway {
                 System.out.println(insertStr);
             }
             else{
-                System.out.println("Album with isrc: " + album.getIsrc() + ", already exists.");
+                throw new RepException("Album with isrc: " + album.getIsrc() + ", already exists.");
             }
         }
         catch (Exception e){
@@ -60,7 +61,7 @@ public class AlbumGateway {
             System.out.println(updateStr);
         }
         catch (Exception e){
-            e.printStackTrace();
+            throw new RepException(e.getMessage());
         }
         finally{
             try {
@@ -87,7 +88,7 @@ public class AlbumGateway {
             }
         }
         catch (Exception e){
-            e.printStackTrace();
+            throw new RepException(e.getMessage());
         }
         finally{
             try {
@@ -123,7 +124,7 @@ public class AlbumGateway {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RepException(e.getMessage());
         } finally {
             try {
                 DBConnect.disconnect();
@@ -156,7 +157,7 @@ public class AlbumGateway {
             return albums;
         }
         catch (Exception e){
-            e.printStackTrace();
+            throw new RepException(e.getMessage());
         }
         finally{
             try {
@@ -166,7 +167,6 @@ public class AlbumGateway {
                 throw new RuntimeException("ERROR: Failed to connect.", e);
             }
         }
-        return null;
     }
 
     public void updateAlbumCover(String isrc, Cover cover){
@@ -188,7 +188,7 @@ public class AlbumGateway {
             }
         }
         catch (Exception e){
-            e.printStackTrace();
+            throw new RepException(e.getMessage());
         }
         finally{
             try {
@@ -220,7 +220,7 @@ public class AlbumGateway {
             }
         }
         catch (Exception e){
-            e.printStackTrace();
+            throw new RepException(e.getMessage());
         }
         finally{
             try {
@@ -254,7 +254,7 @@ public class AlbumGateway {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RepException(e.getMessage());
         } finally {
             try {
                 DBConnect.disconnect();
