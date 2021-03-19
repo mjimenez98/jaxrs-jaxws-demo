@@ -149,7 +149,10 @@ public class Albums {
             if (!isManagerCreated)
                 initialize();
 
-            Album[] albums = manager.getAlbums().stream().sorted(Comparator.comparing(Album::getTitle)).toArray(Album[]::new);
+            Album[] albums = manager.getAlbums()
+                    .stream()
+                    .sorted(Comparator.comparing(Album::getTitle, String.CASE_INSENSITIVE_ORDER))
+                    .toArray(Album[]::new);
 
             return Response.status(Response.Status.OK).entity(albums).type(MediaType.APPLICATION_JSON).build();
         }

@@ -22,7 +22,7 @@ public class LogGateway {
             Connection con = DBConnect.connect();
 
             // SQL query
-            query = "INSERT INTO Logs (isrc, change_type) values(?, ?)";
+            query = "INSERT INTO logs (isrc, change_type) values(?, ?)";
             st = con.prepareStatement(query);
             st.setString(1, isrc);
             st.setString(2, changeType);
@@ -48,7 +48,7 @@ public class LogGateway {
             Connection con = DBConnect.connect();
 
             // SQL query
-            query = "SELECT * FROM Logs ORDER BY created_at DESC";
+            query = "SELECT * FROM logs ORDER BY created_at DESC";
             st = con.prepareStatement(query);
 
             ResultSet rs = st.executeQuery();

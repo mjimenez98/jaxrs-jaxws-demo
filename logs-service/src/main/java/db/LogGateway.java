@@ -23,7 +23,7 @@ public class LogGateway {
             Connection con = DBConnect.connect();
 
             // SQL query
-            query = "SELECT * FROM Logs ORDER BY created_at DESC";
+            query = "SELECT * FROM logs ORDER BY created_at DESC";
             st = con.prepareStatement(query);
 
             ResultSet rs = st.executeQuery();

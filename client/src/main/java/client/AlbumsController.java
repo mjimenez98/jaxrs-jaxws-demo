@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import calls.RestCalls;
 
 import javax.ws.rs.Path;
+import java.text.Collator;
 import java.util.Base64;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -34,6 +36,7 @@ public class AlbumsController {
                                     album.getArtist().getLastName().toLowerCase(Locale.ROOT).contains(text) ||
                                     album.getDescription().toLowerCase(Locale.ROOT).contains(text)
                     )
+                    .sorted(Comparator.comparing(Album::getTitle, String.CASE_INSENSITIVE_ORDER))
                     .collect(Collectors.toList());
         }
 
