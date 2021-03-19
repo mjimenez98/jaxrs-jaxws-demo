@@ -53,7 +53,7 @@ public class AlbumsController {
         byte[] image = RestCalls.GetAlbumCover(isrc);
 
         // If image received
-        if (image.length > 22) {
+        if (image != null && image.length > 22) {
             encodedImage = Base64.getEncoder().encodeToString(image);
         }
 
@@ -89,9 +89,8 @@ public class AlbumsController {
         return "edit";
     }
 
-    @PostMapping("/albums/edit/{isrc}")
+    @PostMapping("/albums/edit")
     public String editAlbumSubmit(@ModelAttribute Album album, Model model) {
-        album.setCover(new Cover(null, null));
         RestCalls.EditAlbum(album);
 
         return "redirect:/albums";

@@ -18,7 +18,7 @@
 </div>
 
 <div class="container">
-    <form th:action="@{/albums/edit/${isrc}}" th:object="${album}" method="POST">
+    <form th:action="@{/albums/edit}" th:object="${album}" method="POST" enctype="multipart/form-data">
         <div class="row">
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
@@ -53,7 +53,7 @@
                 <input class="form-control" type="file" id="cover" th:field="${album.cover.blob}">
             </div>
             <div class="mb-3">
-                <button type="submit" class="btn btn-primary" >Submit</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
             </div>
         </div>
     </form>

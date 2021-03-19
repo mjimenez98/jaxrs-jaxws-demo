@@ -70,36 +70,18 @@ public class RestCalls {
     }
 
     public static void EditAlbum(Album album) {
-        try {
-            MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
-
-            // Convert file to ByteArrayResource
-            String filename = album.getCover().getBlob().getOriginalFilename();
-            ByteArrayResource contentsAsResource = new ByteArrayResource(album.getCover().getBlob().getBytes()) {
-                @Override
-                public String getFilename() {
-                    return filename; // Filename has to be returned in order to be able to post.
-                }
-            };
-
-            // Set file
-            formData.add("file", contentsAsResource);
-
-            // Set album
-            album.setCover(new Cover());
-            formData.add("album", album);
-            webClient.put()
-                    .uri("/albums")
-                    .contentType(MediaType.MULTIPART_FORM_DATA)
-                    .body(BodyInserters.fromMultipartData(formData))
-                    .retrieve()
-                    .bodyToMono(Void.class)
-                    .block();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
+        if (album.getCover().getBlob() != null) {
+            EditAlbumCover(album);
         }
 
+        album.setCover(new Cover());
+        webClient.put()
+                .uri("/albums")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(album))
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block();
     }
 
     public static void DeleteAlbum(String isrc) {
@@ -118,6 +100,35 @@ public class RestCalls {
                 .retrieve()
                 .bodyToMono(byte[].class)
                 .block();
+    }
+
+    public static void EditAlbumCover(Album album) {
+        try {
+            MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
+
+            // Convert file to ByteArrayResource
+            String filename = album.getCover().getBlob().getOriginalFilename();
+            ByteArrayResource contentsAsResource = new ByteArrayResource(album.getCover().getBlob().getBytes()) {
+                @Override
+                public String getFilename() {
+                    return filename; // Filename has to be returned in order to be able to post.
+                }
+            };
+
+            // Set file
+            formData.add("file", contentsAsResource);
+
+            webClient.put()
+                    .uri("/albums/" + album.getIsrc())
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .body(BodyInserters.fromMultipartData(formData))
+                    .retrieve()
+                    .bodyToMono(Void.class)
+                    .block();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void DeleteAlbumCover(String isrc) {
