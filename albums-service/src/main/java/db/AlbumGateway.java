@@ -273,7 +273,12 @@ public class AlbumGateway {
                 Blob blob = checkTable.getBlob("coverart");
                 String mimeType = checkTable.getString("mimetype");
 
-                return new Cover(blob.getBinaryStream(), mimeType);
+                if (blob != null) {
+                    return new Cover(blob.getBinaryStream(), mimeType);
+                }
+                else {
+                    return new Cover();
+                }
             }
             else {
                 System.out.println("Album with isrc: " + isrc + ", does not exist");

@@ -50,7 +50,7 @@
     <p th:text="${album.getIsrc()}"></p>
 
     <h3>Artist</h3>
-    <p th:text="${album.getArtist().getFirstName()} + ${album.getArtist().getLastName()}"></p>
+    <p th:text="${album.getArtist().getFirstName()} + ' ' + ${album.getArtist().getLastName()}"></p>
 </div>
 <div class="container">
     <div class="row">

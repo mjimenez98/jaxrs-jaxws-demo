@@ -223,7 +223,7 @@ public class Albums {
 
             Cover cover = manager.getAlbumCoverImage(isrc);
 
-            if (cover == null)
+            if (cover.getBlob() == null)
                 return Response.status(Response.Status.OK)
                         .entity("Album cover not found!")
                         .type(MediaType.APPLICATION_JSON)
