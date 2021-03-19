@@ -18,7 +18,7 @@
 </div>
 
 <div class="container">
-    <form th:action="@{/albums/new}" th:object="${album}" method="POST">
+    <form th:action="@{/albums/new}" th:object="${album}" method="POST" enctype="multipart/form-data">
         <div class="row">
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
@@ -34,7 +34,7 @@
             </div>
             <div class="mb-3">
                 <label for="release" class="form-label">Release year</label>
-                <input type="text" class="form-control" id="release" aria-describedby="release" value="2020" th:field="${album.releaseYear}">
+                <input type="number" class="form-control" id="release" aria-describedby="release" th:field="${album.releaseYear}">
             </div>
             <div class="mb-3">
                 <label for="firstName" class="form-label">Artist first name</label>
@@ -46,7 +46,7 @@
             </div>
             <div class="mb-3">
                 <label for="cover" class="form-label">Cover</label>
-                <input class="form-control" type="file" id="cover">
+                <input class="form-control" type="file" id="cover" th:field="${album.cover.blob}">
             </div>
             <div class="mb-3">
                 <button type="submit" class="btn btn-primary">Submit</button>

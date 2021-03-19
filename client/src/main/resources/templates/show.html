@@ -19,6 +19,27 @@
 
 <div class="container mb-3">
     <h3>Album</h3>
+
+    <!-- Cover image -->
+    <span th:if="${image != null}">
+        <div class="container">
+            <div class="row">
+                <div class="text-center">
+                    <img th:src="|data:image/png;base64, ${image}|" alt="" width="200" height="200">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3">
+                    <form th:action="@{/albums/delete/cover/{isrc}(isrc=${album.getIsrc()})}" method="GET">
+                        <div class="mb-2">
+                            <button type="submit" class="btn btn-primary">Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </span>
+
     <h4>Title</h4>
     <p th:text="${album.getTitle()}"></p>
     <h4>Description</h4>
@@ -30,9 +51,6 @@
 
     <h3>Artist</h3>
     <p th:text="${album.getArtist().getFirstName()} + ${album.getArtist().getLastName()}"></p>
-
-    <h3>Cover</h3>
-    <!-- Display image -->
 </div>
 <div class="container">
     <div class="row">

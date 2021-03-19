@@ -1,0 +1,22 @@
+CREATE DATABASE AlbumsDB;
+
+Use AlbumsDB;
+
+CREATE TABLE albums (
+  isrc VARCHAR(255) NOT NULL PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  description VARCHAR(255) DEFAULT NULL,
+  year INTEGER NOT NULL,
+  firstname VARCHAR(255) NOT NULL,
+  lastname VARCHAR(255) NOT NULL,
+  coverart blob,
+  mimetype VARCHAR(255) DEFAULT NULL
+);
+
+CREATE TABLE logs (
+    log_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    isrc VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    change_type VARCHAR(255) NOT NULL
+);
+

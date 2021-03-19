@@ -5,14 +5,12 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.NetworkListener;
 import org.glassfish.grizzly.jaxws.JaxwsHandler;
 
-import javax.xml.ws.Endpoint;
 import java.io.IOException;
 
 /**
  * This class publishes our web service to be accessed by a client
  */
 public class ServicePublisher {
-
     static int port = 8090;
     static String servicePath = "/logEntries";
     static String BASE_URI = "http://localhost:" + port + servicePath;
@@ -22,7 +20,7 @@ public class ServicePublisher {
      * @param args
      * @throws IOException
      */
-	public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws IOException{
         System.out.println("SOAP Service listening on " + BASE_URI + "?wsdl");
 
         NetworkListener networkListener = new NetworkListener("jaxws-listener", "0.0.0.0", port);
@@ -35,5 +33,5 @@ public class ServicePublisher {
         httpServer.start();
         System.in.read();
         httpServer.stop();
-	}
+    }
 }
